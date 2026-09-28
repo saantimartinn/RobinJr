@@ -1,13 +1,16 @@
 const CURRENCY = 'EUR';
 const DELFT_PRICE_VERSION = 'delft-2999-v1';
+const GENERAL_PRICE_VERSION = 'general-1999-2399-2499-v1';
 
 const APPLICATION_TOTALS = Object.freeze({
-  general: Object.freeze({ 1: 1700, 2: 2000, 3: 2100 }),
+  general: Object.freeze({ 1: 1999, 2: 2399, 3: 2499 }),
   delft: 2999,
   llegada: 1700,
   mentoria: 450,
   international: 2700,
 });
+
+const HISTORICAL_GENERAL_TOTALS = Object.freeze({ 1: 1700, 2: 2000, 3: 2100 });
 
 const FISCAL = Object.freeze({
   razon_social: 'PROJECT ROBIN STUDENTS MOBILITY S.L.',
@@ -31,6 +34,21 @@ function splitEqual(total, count) {
   return installments;
 }
 
+function generalPlan(totals, numCarreras, remainderToLast = false) {
+  const careers = Number(numCarreras) || 1;
+  const total = totals[careers] || totals[1];
+  const firstCents = Math.round((totals[1] * 100) / 3);
+  const remainderCents = Math.round(total * 100) - firstCents;
+  const secondCents = remainderToLast
+    ? Math.floor(remainderCents / 2)
+    : Math.round(remainderCents / 2);
+  return [
+    { installment: 1, amount: firstCents / 100 },
+    { installment: 2, amount: secondCents / 100 },
+    { installment: 3, amount: (remainderCents - secondCents) / 100 },
+  ];
+}
+
 function applicationPlan(tipo, numCarreras, origin, hasEuId) {
   if (String(origin || '').toLowerCase() === 'otros' && hasEuId !== true) {
     return splitEqual(APPLICATION_TOTALS.international, 3);
@@ -38,15 +56,7 @@ function applicationPlan(tipo, numCarreras, origin, hasEuId) {
   const key = String(tipo || 'general').toLowerCase();
   const careers = Number(numCarreras) || 1;
   if (key === 'general') {
-    const total = APPLICATION_TOTALS.general[careers] || APPLICATION_TOTALS.general[1];
-    const first = Math.round((APPLICATION_TOTALS.general[1] / 3) * 100) / 100;
-    const remainder = Math.round((total - first) * 100) / 100;
-    const second = Math.round((remainder / 2) * 100) / 100;
-    return [
-      { installment: 1, amount: first },
-      { installment: 2, amount: second },
-      { installment: 3, amount: Math.round((remainder - second) * 100) / 100 },
-    ];
+    return generalPlan(APPLICATION_TOTALS.general, careers, true);
   }
   if (key === 'delft') {
     return [
@@ -69,6 +79,13 @@ function contractPricingVersion(contractData) {
   return contractData.pricing_version || null;
 }
 
+function pricingVersionForNewUser(tipo) {
+  const key = String(tipo || 'general').toLowerCase();
+  if (key === 'general') return GENERAL_PRICE_VERSION;
+  if (key === 'delft') return DELFT_PRICE_VERSION;
+  return null;
+}
+
 /**
  * Conserva el plan histórico de Delft en contratos ya firmados antes del
  * cambio a 2.999 €. Los clientes sin contrato firmado usan siempre el precio
@@ -77,7 +94,12 @@ function contractPricingVersion(contractData) {
 function applicationPlanForUser(user) {
   const source = user || {};
   const key = String(source.tipo || 'general').toLowerCase();
-  if (key === 'delft' && source.contract_signed && contractPricingVersion(source.contract_data) !== DELFT_PRICE_VERSION) {
+  const pricingVersion = contractPricingVersion(source.contract_data);
+  const isInternational = String(source.origin || '').toLowerCase() === 'otros' && source.has_eu_id !== true;
+  if (key === 'general' && !isInternational && pricingVersion !== GENERAL_PRICE_VERSION) {
+    return generalPlan(HISTORICAL_GENERAL_TOTALS, source.num_carreras);
+  }
+  if (key === 'delft' && source.contract_signed && pricingVersion !== DELFT_PRICE_VERSION) {
     return [
       { installment: 1, amount: 933 },
       { installment: 2, amount: 933 },
@@ -91,8 +113,12 @@ module.exports = {
   APPLICATION_TOTALS,
   CURRENCY,
   DELFT_PRICE_VERSION,
+  GENERAL_PRICE_VERSION,
+  HISTORICAL_GENERAL_TOTALS,
   FISCAL,
   applicationPlan,
   applicationPlanForUser,
+  contractPricingVersion,
+  pricingVersionForNewUser,
   splitEqual,
 };

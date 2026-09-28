@@ -30,7 +30,7 @@ import {
   adminNotificationsList, adminNotificationCreate, notificationsPending, notificationAck,
 } from "../../api.js";
 
-const { VARIANTS: CONTRACT_TEMPLATES, variantKey: contractVariantKey } = contractContent;
+const { contractVariant: selectContractVariant } = contractContent;
 
 export function OnboardingOrigin({ user, onLogout, onDone }) {
   const [origin, setOrigin] = useState(user.origin || "");
@@ -409,7 +409,7 @@ export function OnboardingContract({ user, onLogout, onDone }) {
   const alumnoDni = user.dni_numero || "—";
   const alumnoDireccion = user.direccion || "—";
 
-  const contractVariant = CONTRACT_TEMPLATES[contractVariantKey(tipo, esOtros)] || CONTRACT_TEMPLATES.general;
+  const contractVariant = selectContractVariant(tipo, esOtros, user.pricing_version);
 
   const [nombreCliente, setNombreCliente] = useState("");
   const [dniCliente, setDniCliente] = useState("");

@@ -4,8 +4,10 @@ const assert = require('node:assert/strict');
 const {
   APPLICATION_TOTALS,
   DELFT_PRICE_VERSION,
+  GENERAL_PRICE_VERSION,
   applicationPlan,
   applicationPlanForUser,
+  pricingVersionForNewUser,
 } = require('../shared/financial-config.cjs');
 const { VARIANTS } = require('../shared/contract-content.cjs');
 
@@ -27,6 +29,39 @@ test('Delft usa 999 € de entrada y dos cuotas posteriores de 1.000 €', () =>
     { installment: 2, amount: 1000 },
     { installment: 3, amount: 1000 },
   ]);
+});
+
+test('General nuevo mantiene 666,33 € de entrada y adapta solo las dos cuotas posteriores', () => {
+  assert.deepEqual(applicationPlan('general', 1), [
+    { installment: 1, amount: 666.33 },
+    { installment: 2, amount: 666.33 },
+    { installment: 3, amount: 666.34 },
+  ]);
+  assert.deepEqual(applicationPlan('general', 2), [
+    { installment: 1, amount: 666.33 },
+    { installment: 2, amount: 866.33 },
+    { installment: 3, amount: 866.34 },
+  ]);
+  assert.deepEqual(applicationPlan('general', 3), [
+    { installment: 1, amount: 666.33 },
+    { installment: 2, amount: 916.33 },
+    { installment: 3, amount: 916.34 },
+  ]);
+});
+
+test('General existente conserva el plan histórico y los clientes nuevos reciben versión vigente', () => {
+  assert.deepEqual(applicationPlanForUser({ tipo: 'general', num_carreras: 2 }), [
+    { installment: 1, amount: 566.67 },
+    { installment: 2, amount: 716.67 },
+    { installment: 3, amount: 716.66 },
+  ]);
+  assert.deepEqual(applicationPlanForUser({
+    tipo: 'general',
+    num_carreras: 2,
+    contract_data: { pricing_version: GENERAL_PRICE_VERSION },
+  }), applicationPlan('general', 2));
+  assert.equal(pricingVersionForNewUser('general'), GENERAL_PRICE_VERSION);
+  assert.equal(pricingVersionForNewUser('delft'), DELFT_PRICE_VERSION);
 });
 
 test('Delft conserva 933 € por cuota en contratos históricos ya firmados', () => {
@@ -55,9 +90,14 @@ test('los contratos de admisiones describen el calendario de pagos 2027 vigente'
   const text = (variant) => variant.blocks.flatMap((block) => [block.text, ...(block.items || [])]).filter(Boolean).join('\n');
   const general = text(VARIANTS.general);
 
-  assert.match(general, /Un tercio \(1\/3\) del total al inicio/);
-  assert.match(general, /Un tercio \(1\/3\) del total tras la presentación/);
+  assert.match(general, /La primera cuota será siempre de 666,33 €/);
+  assert.match(general, /La segunda cuota se abonará tras la presentación/);
   assert.doesNotMatch(general, /Primera cuota: 566,67 €/);
+  assert.match(general, /Aplicación a 1 grado: 1\.999 €/);
+  assert.match(general, /Aplicación a 2 grados: 2\.399 €/);
+  assert.match(general, /Aplicación a 3 grados: 2\.499 €/);
+  assert.match(general, /La primera cuota será siempre de 666,33 €/);
+  assert.match(general, /segunda cuota de 866,33 € y tercera cuota de 866,34 €/);
 
   assert.match(text(VARIANTS.general_noes), /Un tercio \(1\/3\) del total/);
   const delft = text(VARIANTS.delft);

@@ -1,7 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { PRIVACY_EMAIL, VARIANTS, variantKey, fill } = require('../shared/contract-content.cjs');
+const { PRIVACY_EMAIL, VARIANTS, contractVariant, variantKey, fill } = require('../shared/contract-content.cjs');
+const { GENERAL_PRICE_VERSION } = require('../shared/financial-config.cjs');
 
 function contractText(key) {
   return VARIANTS[key].blocks
@@ -35,7 +36,7 @@ test('todos los contratos usan la dirección dinámica recogida del alumno', () 
 });
 
 test('cada categoría mantiene sus servicios e importes propios', () => {
-  assert.match(contractText('general'), /Aplicación a 1 grado: 1\.700 €/);
+  assert.match(contractText('general'), /Aplicación a 1 grado: 1\.999 €/);
   assert.match(contractText('general_noes'), /coste total de 2\.700 €/);
   assert.match(contractText('general_noes'), /Gestión del proceso de visado/);
   assert.match(contractText('delft'), /Ingeniería Aeroespacial en Delft/);
@@ -44,6 +45,16 @@ test('cada categoría mantiene sus servicios e importes propios', () => {
   assert.match(contractText('mentoria'), /El precio de la mentoría es de 800 €/);
   assert.doesNotMatch(contractText('mentoria'), /correspondientes al programa Pack Llegada Robin/);
   assert.doesNotMatch(contractText('mentoria'), /El pago del Pack Llegada/);
+});
+
+test('el contrato General conserva precios históricos solo para clientes existentes', () => {
+  const text = (variant) => variant.blocks.flatMap((block) => [block.text, ...(block.items || [])]).filter(Boolean).join('\n');
+  const historical = text(contractVariant('general', false, null));
+  const current = text(contractVariant('general', false, GENERAL_PRICE_VERSION));
+  assert.match(historical, /Aplicación a 1 grado: 1\.700 €/);
+  assert.match(historical, /Un tercio \(1\/3\) del total al inicio/);
+  assert.match(current, /Aplicación a 1 grado: 1\.999 €/);
+  assert.match(current, /La primera cuota será siempre de 666,33 €/);
 });
 
 test('todos los servicios terminan el 14 de septiembre de 2027 y migran a suscripción', () => {

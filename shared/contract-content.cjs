@@ -3,6 +3,8 @@
  * Fuente única para la vista previa del onboarding y el PDF firmado.
  */
 
+const { GENERAL_PRICE_VERSION } = require('./financial-config.cjs');
+
 const PRIVACY_EMAIL = 'hello@project-robin.com';
 
 const INTRO_ADMISSIONS = {
@@ -115,6 +117,17 @@ const PAGOS_TRES_TERCIOS = [
   { type: 'p', text: 'Dichos pagos están sujetos a los descuentos pertinentes de los que informará un asesor de Project Robin, así como a reducciones en el precio sujetas a servicios u otros bienes de consumo acordados previamente bajo otro contrato específico aplicable a la situación.' },
 ];
 
+const PAGOS_GENERAL_NUEVO = [
+  { type: 'p', text: 'El pago por los servicios se efectuará en tres cuotas. La primera cuota será siempre de 666,33 €. El número definitivo de aplicaciones se seleccionará posteriormente desde el perfil de administración y determinará únicamente el importe de las cuotas segunda y tercera:' },
+  { type: 'ul', items: [
+    'Aplicación a 1 grado: primera cuota de 666,33 €, segunda cuota de 666,33 € y tercera cuota de 666,34 €.',
+    'Aplicación a 2 grados: primera cuota de 666,33 €, segunda cuota de 866,33 € y tercera cuota de 866,34 €.',
+    'Aplicación a 3 grados: primera cuota de 666,33 €, segunda cuota de 916,33 € y tercera cuota de 916,34 €.',
+  ] },
+  { type: 'p', text: 'La primera cuota se abonará al inicio del servicio, tras la primera reunión y antes de la segunda, salvo que alguno de los asesores de Project Robin indique otra cosa. La segunda cuota se abonará tras la presentación de las aplicaciones y la tercera tras la aceptación en al menos una universidad.' },
+  { type: 'p', text: 'Dichos pagos están sujetos a los descuentos pertinentes de los que informará un asesor de Project Robin, así como a reducciones en el precio sujetas a servicios u otros bienes de consumo acordados previamente bajo otro contrato específico aplicable a la situación.' },
+];
+
 const SERVICIOS_TRANSICION = [
   { type: 'h3', text: '1.1 Soporte y acompañamiento antes y durante la llegada' },
   { type: 'ul', items: [
@@ -142,11 +155,12 @@ const SERVICE_OBLIGATIONS = [
   { type: 'p', text: 'La Empresa no garantiza resultados que dependan de universidades, organismos públicos, residencias o proveedores externos, pero sí responderá de las actuaciones que le sean directamente imputables conforme a lo previsto en este contrato.' },
 ];
 
-const GENERAL = {
-  key: 'general',
-  title: 'Contrato de Términos y Condiciones de los Servicios de Consultoría Académica y Mentoría',
-  acceptanceFooter: 'EL PAGO DE LA PRIMERA CUOTA POR PARTE DE EL CLIENTE IMPLICARÁ LA ACEPTACIÓN PLENA Y SIN RESERVAS DE LOS PRESENTES TÉRMINOS Y CONDICIONES, ASÍ COMO DE TODAS LAS OBLIGACIONES Y DERECHOS AQUÍ ESTABLECIDOS.',
-  blocks: [
+function buildGeneralContract(key, prices, paymentBlocks) {
+  return {
+    key,
+    title: 'Contrato de Términos y Condiciones de los Servicios de Consultoría Académica y Mentoría',
+    acceptanceFooter: 'EL PAGO DE LA PRIMERA CUOTA POR PARTE DE EL CLIENTE IMPLICARÁ LA ACEPTACIÓN PLENA Y SIN RESERVAS DE LOS PRESENTES TÉRMINOS Y CONDICIONES, ASÍ COMO DE TODAS LAS OBLIGACIONES Y DERECHOS AQUÍ ESTABLECIDOS.',
+    blocks: [
     { type: 'h2', text: 'Entre' }, INTRO_ADMISSIONS, ...DATOS_PARTES,
     { type: 'h2', text: '1. Objeto del contrato' },
     { type: 'p', text: 'La Empresa se compromete a proporcionar servicios de asesoría y mentoría académica para la preparación y gestión del proceso de admisión en uno (1), dos (2) o tres (3) grados en los Países Bajos, cuyo número y programas concretos se determinarán posteriormente de acuerdo con El Cliente. El objetivo de los servicios es guiar a El Cliente en el proceso de selección de universidades, la preparación de documentos de solicitud y la presentación de las aplicaciones, según lo acordado con El Cliente.' },
@@ -160,8 +174,8 @@ const GENERAL = {
     ] },
     { type: 'h2', text: '2. Servicios ofrecidos y tarifas' },
     { type: 'p', text: 'Las siguientes opciones se incluyen a título informativo. El número y los grados concretos se determinarán posteriormente con El Cliente y no constituyen campos rellenables de este contrato:' },
-    { type: 'ul', items: ['Aplicación a 1 grado: 1.700 €', 'Aplicación a 2 grados: 2.000 €', 'Aplicación a 3 grados: 2.100 €'] },
-    ...PAGOS_TRES_TERCIOS,
+    { type: 'ul', items: prices },
+    ...paymentBlocks,
     { type: 'h2', text: '3. Forma de pago' }, ...FORMA_PAGO_ADMISSIONS,
     { type: 'h2', text: '4. Limitación de responsabilidad y compromisos de Project Robin' }, ...RESPONSABILIDAD_ADMISSIONS,
     { type: 'h2', text: '5. Derecho de admisión' }, ...DERECHO_ADMISION_ADMISSIONS,
@@ -169,8 +183,21 @@ const GENERAL = {
     { type: 'h2', text: '7. Duración del contrato' }, ...DURACION,
     { type: 'h2', text: '8. Jurisdicción y ley aplicable' }, ...JURISDICCION_ADMISSIONS,
     { type: 'h2', text: '9. Protección de Datos Personales' }, ...PRIVACIDAD_DETALLADA,
-  ],
-};
+    ],
+  };
+}
+
+const GENERAL = buildGeneralContract(
+  'general',
+  ['Aplicación a 1 grado: 1.999 €', 'Aplicación a 2 grados: 2.399 €', 'Aplicación a 3 grados: 2.499 €'],
+  PAGOS_GENERAL_NUEVO
+);
+
+const GENERAL_HISTORICAL = buildGeneralContract(
+  'general_historical',
+  ['Aplicación a 1 grado: 1.700 €', 'Aplicación a 2 grados: 2.000 €', 'Aplicación a 3 grados: 2.100 €'],
+  PAGOS_TRES_TERCIOS
+);
 
 const GENERAL_NOES = {
   key: 'general_noes',
@@ -338,6 +365,12 @@ function variantKey(tipo, esOtros) {
   return 'general';
 }
 
+function contractVariant(tipo, esOtros, pricingVersion) {
+  const key = variantKey(tipo, esOtros);
+  if (key === 'general' && pricingVersion !== GENERAL_PRICE_VERSION) return GENERAL_HISTORICAL;
+  return VARIANTS[key] || VARIANTS.general;
+}
+
 function fill(text, values) {
   return String(text || '').replace(/\{\{([A-Z_]+)\}\}/g, (_, key) => {
     const value = values[key];
@@ -345,4 +378,4 @@ function fill(text, values) {
   });
 }
 
-module.exports = { PRIVACY_EMAIL, VARIANTS, variantKey, fill };
+module.exports = { PRIVACY_EMAIL, VARIANTS, contractVariant, variantKey, fill };

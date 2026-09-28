@@ -13,7 +13,7 @@ Reglas de dominio, autorización, validación y adaptadores usados por las Netli
 | Archivo | Qué hace | Relaciones clave | Modifícalo cuando |
 |---|---|---|---|
 | [`account-access-email.js`](../../../lib/account-access-email.js) | Servicio backend compartido para account access email. | `./email`<br>`./operational-config` | Al cambiar lógica backend compartida o una integración. |
-| [`admin-dashboard.js`](../../../lib/admin-dashboard.js) | Servicio backend compartido para admin dashboard. | `./admins`<br>`./authorization` | Al cambiar lógica backend compartida o una integración. |
+| [`admin-dashboard.js`](../../../lib/admin-dashboard.js) | Servicio backend compartido para admin dashboard. | `./admins`<br>`./authorization`<br>`./student-phone` | Al cambiar lógica backend compartida o una integración. |
 | [`admins.js`](../../../lib/admins.js) | lib/admins.js — Fuente única de verdad de los asesores (admins) de Project Robin. Cada asesor tiene su propia cuenta Google Workspace (calendario + Meet). | — | Al cambiar lógica backend compartida o una integración. |
 | [`anthropic-chat.js`](../../../lib/anthropic-chat.js) | lib/anthropic-chat.js Helper compartido para llamar a Claude para chat / resumen / historial. | — | Al cambiar lógica backend compartida o una integración. |
 | [`auth.js`](../../../lib/auth.js) | Auth helpers para Netlify Functions. - bcrypt para hashing de password | — | Al cambiar lógica backend compartida o una integración. |
@@ -22,6 +22,7 @@ Reglas de dominio, autorización, validación y adaptadores usados por las Netli
 | [`booking-config.js`](../../../lib/booking-config.js) | Servicio backend compartido para booking config. | — | Al cambiar lógica backend compartida o una integración. |
 | [`booking-create.js`](../../../lib/booking-create.js) | Servicio backend compartido para booking create. | `./email`<br>`./anthropic-chat`<br>`./observability` | Al cambiar lógica backend compartida o una integración. |
 | [`career-documents.js`](../../../lib/career-documents.js) | Servicio backend compartido para career documents. | — | Al cambiar lógica backend compartida o una integración. |
+| [`career-requirements.js`](../../../lib/career-requirements.js) | Servicio backend compartido para career requirements. | `./career-documents` | Al cambiar lógica backend compartida o una integración. |
 | [`career-suggestions.js`](../../../lib/career-suggestions.js) | Servicio backend compartido para career suggestions. | `./anthropic-chat`<br>`./careers-recommender` | Al cambiar lógica backend compartida o una integración. |
 | [`careers-data.json`](../../../lib/careers-data.json) | Servicio backend compartido para careers data. | — | Al cambiar lógica backend compartida o una integración. |
 | [`careers-recommender.js`](../../../lib/careers-recommender.js) | lib/careers-recommender.js Motor de recomendacion de carreras universitarias para Project Robin. | `./careers-data.json` | Al cambiar lógica backend compartida o una integración. |
@@ -49,6 +50,7 @@ Reglas de dominio, autorización, validación y adaptadores usados por las Netli
 | [`privacy.js`](../../../lib/privacy.js) | Servicio backend compartido para privacy. | — | Al cambiar lógica backend compartida o una integración. |
 | [`storage.js`](../../../lib/storage.js) | Helpers de almacenamiento privado en Supabase Storage. Los binarios viven en Storage y la BD sólo guarda la ruta | — | Al cambiar lógica backend compartida o una integración. |
 | [`stripe.js`](../../../lib/stripe.js) | Helper compartido de Stripe (pasarela de pago real, modo Checkout hosted). Env vars: | `./payments`<br>`./integration-sync`<br>`./onboarding-fulfill` | Al cambiar lógica backend compartida o una integración. |
+| [`student-phone.js`](../../../lib/student-phone.js) | Servicio backend compartido para student phone. | — | Al cambiar lógica backend compartida o una integración. |
 | [`supabase.js`](../../../lib/supabase.js) | Cliente Supabase usado por las Netlify Functions (server-side). Usa la SERVICE ROLE KEY para bypassar RLS — esta key SOLO debe vivir | — | Al cambiar lógica backend compartida o una integración. |
 | [`validation.js`](../../../lib/validation.js) | Servicio backend compartido para validation. | — | Al cambiar lógica backend compartida o una integración. |
 

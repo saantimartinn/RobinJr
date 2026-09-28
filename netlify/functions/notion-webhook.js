@@ -7,6 +7,7 @@ const { passwordPolicy } = require('../../shared/password-policy.cjs');
 const { createOperationLogger, errorCode } = require('../../lib/observability');
 const { sendAccountAccessEmail } = require('../../lib/account-access-email');
 const { TRIGGER_STATUS, ensureDriveFolder, logEvent, mapResponsableToAdminEmail, normalizeTipo, parsePayload } = require('../../lib/notion');
+const { pricingVersionForNewUser } = require('../../shared/financial-config.cjs');
 
 exports.handler = async (event) => {
   const log = createOperationLogger(event, {
@@ -150,6 +151,8 @@ exports.handler = async (event) => {
       assigned_to: assignedEmail || null,
       tipo: normalizedTipo,
     };
+    const pricingVersion = pricingVersionForNewUser(normalizedTipo);
+    if (pricingVersion) newUser.contract_data = { pricing_version: pricingVersion };
     // Si Notion marca el 1er pago como pagado (transferencia), se crea con la
     // primera cuota saldada: el cliente no tendrá que pagarla en el portal.
     if (primer_pago_pagado) {

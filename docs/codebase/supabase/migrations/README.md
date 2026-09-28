@@ -18,6 +18,7 @@ Contenido mantenido de `supabase/migrations/`.
 | [`202608260001_add_user_avatar_path.sql`](../../../../supabase/migrations/202608260001_add_user_avatar_path.sql) | Archivo mantenido del repositorio: 202608260001_add_user_avatar_path.sql. | — | Cuando cambie la responsabilidad indicada. |
 | [`202609080001_add_career_recommendation_feedback.sql`](../../../../supabase/migrations/202609080001_add_career_recommendation_feedback.sql) | Archivo mantenido del repositorio: 202609080001_add_career_recommendation_feedback.sql. | — | Cuando cambie la responsabilidad indicada. |
 | [`202609080002_add_portal_faqs.sql`](../../../../supabase/migrations/202609080002_add_portal_faqs.sql) | Archivo mantenido del repositorio: 202609080002_add_portal_faqs.sql. | — | Cuando cambie la responsabilidad indicada. |
+| [`202609220001_add_student_phone.sql`](../../../../supabase/migrations/202609220001_add_student_phone.sql) | Archivo mantenido del repositorio: 202609220001_add_student_phone.sql. | — | Cuando cambie la responsabilidad indicada. |
 
 ---
 

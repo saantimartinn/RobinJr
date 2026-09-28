@@ -2,7 +2,7 @@ const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { isApplicationAdmin } = require('../../lib/authorization');
 const { json, methodNotAllowed, serverError } = require('../../lib/http');
-const { applicationPlanForUser } = require('../../shared/financial-config.cjs');
+const { applicationPlanForUser, contractPricingVersion } = require('../../shared/financial-config.cjs');
 const { signedUrl } = require('../../lib/storage');
 
 exports.handler = async (event) => {
@@ -32,6 +32,7 @@ exports.handler = async (event) => {
       tipo: u.tipo || 'general',
       num_carreras: u.num_carreras || 1,
       first_payment_amount: firstPayment ? firstPayment.amount : null,
+      pricing_version: contractPricingVersion(u.contract_data),
       payment_currency: firstPayment ? 'EUR' : null,
       origin: u.origin || null,
       application_level: u.application_level || null,

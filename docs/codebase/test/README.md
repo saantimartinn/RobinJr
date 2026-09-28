@@ -23,8 +23,9 @@ Regresiones unitarias y de límites arquitectónicos ejecutadas por Node.js.
 | [`booking-persistence.test.js`](../../../test/booking-persistence.test.js) | Pruebas automatizadas de booking persistence.test. | `../netlify/functions/bookings-create` | Al fijar o actualizar el comportamiento cubierto. |
 | [`career-documents.test.js`](../../../test/career-documents.test.js) | Pruebas automatizadas de career documents.test. | `../lib/career-documents` | Al fijar o actualizar el comportamiento cubierto. |
 | [`career-feedback.test.js`](../../../test/career-feedback.test.js) | Pruebas automatizadas de career feedback.test. | `../lib/career-suggestions` | Al fijar o actualizar el comportamiento cubierto. |
+| [`career-requirements.test.js`](../../../test/career-requirements.test.js) | Pruebas automatizadas de career requirements.test. | `../lib/career-requirements` | Al fijar o actualizar el comportamiento cubierto. |
 | [`careers.test.js`](../../../test/careers.test.js) | Pruebas automatizadas de careers.test. | `../netlify/functions/careers-list` | Al fijar o actualizar el comportamiento cubierto. |
-| [`contract-content.test.js`](../../../test/contract-content.test.js) | Pruebas automatizadas de contract content.test. | `../shared/contract-content.cjs` | Al fijar o actualizar el comportamiento cubierto. |
+| [`contract-content.test.js`](../../../test/contract-content.test.js) | Pruebas automatizadas de contract content.test. | `../shared/contract-content.cjs`<br>`../shared/financial-config.cjs` | Al fijar o actualizar el comportamiento cubierto. |
 | [`dni-upload.test.js`](../../../test/dni-upload.test.js) | Pruebas automatizadas de dni upload.test. | `../lib/dni-upload` | Al fijar o actualizar el comportamiento cubierto. |
 | [`document-drive.test.js`](../../../test/document-drive.test.js) | Pruebas automatizadas de document drive.test. | `../lib/document-drive` | Al fijar o actualizar el comportamiento cubierto. |
 | [`faq-knowledge.test.js`](../../../test/faq-knowledge.test.js) | Pruebas automatizadas de faq knowledge.test. | `../lib/faq-knowledge`<br>`../lib/faq-citations` | Al fijar o actualizar el comportamiento cubierto. |
@@ -41,6 +42,7 @@ Regresiones unitarias y de límites arquitectónicos ejecutadas por Node.js.
 | [`security-headers.test.js`](../../../test/security-headers.test.js) | Pruebas automatizadas de security headers.test. | `../lib/http` | Al fijar o actualizar el comportamiento cubierto. |
 | [`storage.test.js`](../../../test/storage.test.js) | Pruebas automatizadas de storage.test. | `../lib/storage` | Al fijar o actualizar el comportamiento cubierto. |
 | [`stripe.test.js`](../../../test/stripe.test.js) | Pruebas automatizadas de stripe.test. | `../lib/stripe` | Al fijar o actualizar el comportamiento cubierto. |
+| [`student-phone.test.js`](../../../test/student-phone.test.js) | Pruebas automatizadas de student phone.test. | `../lib/student-phone` | Al fijar o actualizar el comportamiento cubierto. |
 | [`validation.test.js`](../../../test/validation.test.js) | Pruebas automatizadas de validation.test. | `../lib/validation` | Al fijar o actualizar el comportamiento cubierto. |
 | [`webhook-auth.test.js`](../../../test/webhook-auth.test.js) | Pruebas automatizadas de webhook auth.test. | `../lib/http`<br>`../netlify/functions/meet-transcript-poll` | Al fijar o actualizar el comportamiento cubierto. |
 

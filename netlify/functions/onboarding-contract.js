@@ -13,7 +13,7 @@ const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
 const { sendEmail } = require('../../lib/email');
 const { buildContractPdf } = require('../../lib/contract-pdf');
-const { DELFT_PRICE_VERSION } = require('../../shared/financial-config.cjs');
+const { DELFT_PRICE_VERSION, contractPricingVersion } = require('../../shared/financial-config.cjs');
 const storage = require('../../lib/storage');
 const { variantKey } = require('../../shared/contract-content.cjs');
 
@@ -93,6 +93,8 @@ exports.handler = async (event) => {
     const esMaestria = esOtros && (u.application_level || '') === 'maestria';
     const esPasaporte = esOtros && u.has_eu_id === false;
     const signatureMime = (/^data:([^;,]+)/.exec(String(signature_content)) || [])[1] || 'image/png';
+    const existingPricingVersion = contractPricingVersion(u.contract_data);
+    const pricingVersion = existingPricingVersion || (tipo === 'delft' ? DELFT_PRICE_VERSION : null);
     const uploadedSignature = await storage.uploadDataUrl(sb, signature_content, {
       keyPrefix: `${u.id}/contracts`,
       filename: `signature-${nowIso.slice(0, 10)}.png`,
@@ -101,7 +103,7 @@ exports.handler = async (event) => {
 
     const contract_data = {
       version_template: 'contratos-2027-revision-integrada',
-      pricing_version: tipo === 'delft' ? DELFT_PRICE_VERSION : null,
+      pricing_version: pricingVersion,
       tipo,
       variant: variantKey(tipo, esOtros),
       fecha_firma: nowIso,
@@ -149,6 +151,7 @@ exports.handler = async (event) => {
         numCarreras: u.num_carreras || null,
         fechaStr,
         signatureDataUrl: signature_content,
+        pricingVersion,
       });
 
       const clienteNombre = contract_data.cliente.nombre || 'Cliente';

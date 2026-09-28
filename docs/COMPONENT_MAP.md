@@ -1,6 +1,6 @@
 # Frontend component map
 
-Generated from 14 focused frontend modules: 71 top-level functions/components.
+Generated from 15 focused frontend modules: 76 top-level functions/components.
 Props, state, API calls and child components are static approximations and must be reviewed with behavioral changes.
 Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-platform reproducibility.
 
@@ -11,21 +11,21 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 | AuthShell | app.jsx | app/auth | { children } | none | none | none | 149 |
 | PortalSelector | app.jsx | app/auth | { onSelectPortal } | none | none | AuthShell, Icon | 190 |
 | LoginScreen | app.jsx | app/auth | { onLogin, onBack } | email, password, error, loading | none | AuthShell, Field, Btn | 230 |
-| useDebounced | application/AdminPortal.jsx | application/admin | value, delay = 250 | v | none | none | 48 |
-| normalizeAdminClient | application/AdminPortal.jsx | application/admin | apiClient, adminId | none | none | none | 55 |
-| AdminDashboard | application/AdminPortal.jsx | application/admin | { user, onOpenClient, onOpenAssign, onGotoTab } | loading, error, data, alertSort, taskTitle, taskBusy, refreshKey | adminDashboard, adminTaskCreate, adminTaskToggle, adminTaskDelete | Card, CardContent, Btn, KpiCard, CardHeader, Badge, Row, Divider | 72 |
-| AdminChatAssistant | application/AdminPortal.jsx | application/admin | { user, activeClientId, clients, mascot } | mode, messages, draft, busy, error, notesOpen, notesText, notesUserId, notesTitle, notesBusy | adminAssistant, adminHistorialAdd | Btn | 531 |
-| AdminPortal | application/AdminPortal.jsx | application/admin | { user, onLogout } | data, mascot, searchQ, loadingClients, loadError, assignOpen, assignList, assignLoading, assignError, assignBusyId | adminListClients, adminListAllClients, adminAssignClient | AdminWorkspace, AdminDashboard, AdminClientesList, AdminEstadoFases, AdminPerfil, AdminCarrerasNew, AdminDocumentosNew, AdminChatIA, AdminReservas, AdminPagos | 720 |
-| AdminNotificaciones | application/AdminPortal.jsx | application/admin | { adminId, clients } | title, content, type, scope, selected, allClients, loadingAll, busy, feedback, error | adminListAllClients, adminNotificationsList, adminNotificationCreate | Badge, Card, CardHeader, CardContent, Field, TextareaField, Btn | 910 |
-| ClientAvatar | application/AdminPortal.jsx | application/admin | { nombre, apellidos, size = "md" } | none | none | none | 1126 |
-| AdminClientesList | application/AdminPortal.jsx | application/admin | { clients, totalCount, searchQ, onSearch, onSelect, loading, loadError, onOpenAssign } | none | none | Card, CardHeader, Badge, Btn, CardContent, ClientAvatar | 1140 |
-| AssignClientModal | application/AdminPortal.jsx | application/admin | { adminEmail, list, loading, error, busyId, onAssign, onClose } | q | none | ClientAvatar, Badge, Btn | 1209 |
-| AdminPerfil | application/AdminPortal.jsx | application/admin | { client, onRefresh } | sugg, suggLoading, suggErr, regening, feedbackBusy, showQ | adminCareerSuggestions, adminCareerSuggestionsRegenerate, adminCareerSuggestionFeedback | Card, CardHeader, CardContent, LivedAbroadCard, Btn, Badge | 1283 |
-| AdminReservas | application/AdminPortal.jsx | application/bookings | { client } | bookings, loading, error | bookingsList | Card, CardHeader, CardContent, Badge | 1562 |
-| AdminPagos | application/AdminPortal.jsx | application/payments | { client } | data, loading, error, busyId, facturaOpen, facturaPayment, now, xConcept, xAmount, xDue | adminPaymentsList, adminPaymentsUnlock, adminPaymentsSetAmount, adminPaymentsSetCarreras, adminPaymentsAdd, adminPaymentsDelete | Card, CardHeader, CardContent, Btn, PaymentStatusBadge, Field, Factura | 1650 |
-| AdminCarrerasNew | application/AdminPortal.jsx | application/careers | { client } | library, assigned, loading, error, cName, cUni, cCity, cLevel, cDocs, busy | adminCareersListAll, adminCareersCreate, adminCareersDelete, adminCareersAssign, adminCareersUnassign | Card, CardHeader, CardContent, Field, Divider, Btn | 1889 |
-| AdminDocumentosNew | application/AdminPortal.jsx | application/documents | { client } | docs, loading, error, busyId, newName, newRequired, newTemplate | documentsGet, adminDocumentsList, adminDocumentsReview, adminDocumentsAdd, adminDocumentsDelete | Card, CardHeader, CardContent, Field, Btn, Badge | 2095 |
-| AdminEstadoFases | application/AdminPortal.jsx | application/admin | { client, onChangedPhase } | phase, busy, error | adminPhaseSet | ClientAvatar, Card, CardHeader, CardContent | 2240 |
+| useDebounced | application/AdminPortal.jsx | application/admin | value, delay = 250 | v | none | none | 49 |
+| normalizeAdminClient | application/AdminPortal.jsx | application/admin | apiClient, adminId | none | none | none | 56 |
+| AdminDashboard | application/AdminPortal.jsx | application/admin | { user, onOpenClient, onOpenAssign, onGotoTab } | loading, error, data, alertSort, taskTitle, taskBusy, refreshKey | adminDashboard, adminTaskCreate, adminTaskToggle, adminTaskDelete | Card, CardContent, Btn, KpiCard, CardHeader, Badge, Row, Divider | 74 |
+| AdminChatAssistant | application/AdminPortal.jsx | application/admin | { user, activeClientId, clients, mascot } | mode, messages, draft, busy, error, notesOpen, notesText, notesUserId, notesTitle, notesBusy | adminAssistant, adminHistorialAdd | Btn | 533 |
+| AdminPortal | application/AdminPortal.jsx | application/admin | { user, onLogout } | data, mascot, searchQ, loadingClients, loadError, assignOpen, assignList, assignLoading, assignError, assignBusyId | adminListClients, adminListAllClients, adminAssignClient | AdminWorkspace, AdminDashboard, AdminClientesList, AdminEstadoFases, AdminPerfil, AdminCarrerasNew, AdminDocumentosNew, AdminChatIA, AdminReservas, AdminPagos | 722 |
+| AdminNotificaciones | application/AdminPortal.jsx | application/admin | { adminId, clients } | title, content, type, scope, selected, allClients, loadingAll, busy, feedback, error | adminListAllClients, adminNotificationsList, adminNotificationCreate | Badge, Card, CardHeader, CardContent, Field, TextareaField, Btn | 912 |
+| ClientAvatar | application/AdminPortal.jsx | application/admin | { nombre, apellidos, size = "md" } | none | none | none | 1128 |
+| AdminClientesList | application/AdminPortal.jsx | application/admin | { clients, totalCount, searchQ, onSearch, onSelect, loading, loadError, onOpenAssign } | none | none | Card, CardHeader, Badge, Btn, CardContent, ClientAvatar | 1142 |
+| AssignClientModal | application/AdminPortal.jsx | application/admin | { adminEmail, list, loading, error, busyId, onAssign, onClose } | q | none | ClientAvatar, Badge, Btn | 1211 |
+| AdminPerfil | application/AdminPortal.jsx | application/admin | { client, onRefresh } | sugg, suggLoading, suggErr, regening, feedbackBusy, showQ | adminCareerSuggestions, adminCareerSuggestionsRegenerate, adminCareerSuggestionFeedback | Card, CardHeader, CardContent, LivedAbroadCard, Btn, Badge | 1285 |
+| AdminReservas | application/AdminPortal.jsx | application/bookings | { client } | bookings, loading, error | bookingsList | Card, CardHeader, CardContent, Badge | 1565 |
+| AdminPagos | application/AdminPortal.jsx | application/payments | { client } | data, loading, error, busyId, facturaOpen, facturaPayment, now, xConcept, xAmount, xDue | adminPaymentsList, adminPaymentsUnlock, adminPaymentsSetAmount, adminPaymentsSetCarreras, adminPaymentsAdd, adminPaymentsDelete | Card, CardHeader, CardContent, Btn, PaymentStatusBadge, Field, Factura | 1653 |
+| AdminCarrerasNew | application/AdminPortal.jsx | application/careers | { client } | library, assigned, loading, error, cName, cUni, cCity, cLevel, cDocs, editingId | adminCareersListAll, adminCareersCreate, adminCareersDelete, adminCareersAssign, adminCareersUnassign | Card, CardHeader, Btn, CardContent, Field, Divider, CareerRequirementsTimeline | 1892 |
+| AdminDocumentosNew | application/AdminPortal.jsx | application/documents | { client } | docs, loading, error, busyId, newName, newRequired, newTemplate | documentsGet, adminDocumentsList, adminDocumentsReview, adminDocumentsAdd, adminDocumentsDelete | Card, CardHeader, CardContent, Field, Btn, Badge | 2136 |
+| AdminEstadoFases | application/AdminPortal.jsx | application/admin | { client, onChangedPhase } | phase, busy, error | adminPhaseSet | ClientAvatar, Card, CardHeader, CardContent | 2281 |
 | AdminWorkspace | application/AdminWorkspace.jsx | shared/application | { adminName, active, client, clients, loading, error, onNavigate, onSwitchClient, onLogout, children } | pickerOpen | none | Icon, ClientPicker | 24 |
 | ClientPicker | application/AdminWorkspace.jsx | shared/application | { clients, selectedId, onSelect, onClose, returnRef } | query | none | none | 68 |
 | PortalShell | application/ApplicationPortals.jsx | application/client | { user, clientName, onLogout, active, setActive, onUserRefresh } | profilePhoto, photoBusy, photoError, chatOpen, mascot, summary | documentsList, bookingsList, profileAvatarUpload | NotificationPopup, Icon, AnimatePresence, Estado, Perfil, CarrerasCliente, DocumentosCliente, Reservas, PagosCliente, FaqsPage | 46 |
@@ -38,32 +38,37 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 | ChatIA | application/ApplicationPortals.jsx | application/client | { active, mascot, onOpenFaq } | messages, aiPaused, draft, loading, sending, error | chatAiList, chatAiSend | none | 581 |
 | AdminChatIA | application/ApplicationPortals.jsx | application/admin | { client } | messages, aiPaused, draft, loading, busy, error | adminChatList, adminChatSend, adminChatResume | Card, CardHeader, CardContent, Btn | 686 |
 | Reservas | application/ApplicationPortals.jsx | application/bookings | none | serverBookings, loading, error, busy, refreshKey, lastCreated, avDays, avLoading, advisorName, calendarConnected | bookingsList, bookingsCreate, bookingsAvailability | Card, CardHeader, CardContent, Btn, Badge | 811 |
-| PagosCliente | application/ClientSections.jsx | application/payments | none | data, loading, loadError, facturaOpen, facturaPayment, payBusy | paymentsList, paymentsCheckout | Card, CardHeader, CardContent, PaymentStatusBadge, Btn, Factura | 13 |
-| CarrerasCliente | application/ClientSections.jsx | application/careers | none | careers, loading, error | careersListMine | Card, CardHeader, CardContent, Badge | 120 |
-| DocumentosCliente | application/ClientSections.jsx | application/documents | none | docs, loading, error, uploadingId | documentsList, documentsGet, documentsUpload | Badge, Btn, Card, CardHeader, CardContent | 176 |
+| careerTimelineItems | application/careers/CareerRequirementsTimeline.jsx | shared/application | careers = [] | none | none | none | 6 |
+| formatDeadline | application/careers/CareerRequirementsTimeline.jsx | shared/application | value | none | none | none | 23 |
+| CareerRequirementsTimeline | application/careers/CareerRequirementsTimeline.jsx | shared/application | { careers = [], title = "Timeline de requerimientos" } | none | none | Card, CardHeader, CardContent, Icon, Badge | 30 |
+| PagosCliente | application/ClientSections.jsx | application/payments | none | data, loading, loadError, facturaOpen, facturaPayment, payBusy | paymentsList, paymentsCheckout | Card, CardHeader, CardContent, PaymentStatusBadge, Btn, Factura | 14 |
+| CarrerasCliente | application/ClientSections.jsx | application/careers | none | careers, loading, error | careersListMine | Card, CardHeader, CardContent, Badge, CareerRequirementsTimeline | 121 |
+| DocumentosCliente | application/ClientSections.jsx | application/documents | none | docs, loading, error, uploadingId | documentsList, documentsGet, documentsUpload | Badge, Btn, Card, CardHeader, CardContent | 178 |
 | buildDefaultDocs | application/documents/document-utils.js | application/documents | level | none | none | none | 28 |
-| statusLabel | application/documents/document-utils.js | application/documents | status | none | none | none | 42 |
+| statusLabel | application/documents/document-utils.js | application/documents | status | none | none | none | 46 |
+| newCareerRequirement | application/documents/document-utils.js | application/documents | type = 'document' | none | none | none | 53 |
+| normalizeCareerRequirement | application/documents/document-utils.js | application/documents | requirement = {} | none | none | none | 67 |
 | FaqsPage | application/Faqs.jsx | shared/application | none | faqs | faqsList | Card, CardContent | 6 |
 | AdminFaqManager | application/Faqs.jsx | shared/application | none | faqs | faqsList, adminFaqMutate | Btn, Card, CardHeader, CardContent, Field, TextareaField, Badge | 28 |
 | OnboardingOrigin | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | origin, level, pais, hasEu, screen, error, busy | originSave | Ic, OnboardingShell, Choice, Field, Btn | 35 |
 | OnboardingDNI | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | anverso, reverso, aPreview, rPreview, phase, error, busy, fields | dniExtract, dniSave | OnboardingShell, UploadSlot, Btn, Field | 171 |
-| UploadSlot | application/onboarding/OnboardingFlow.jsx | application/onboarding | { label, preview, onPick } | none | none | Hl | 301 |
-| renderContractText | application/onboarding/OnboardingFlow.jsx | application/onboarding | text, values | none | none | Hl | 352 |
-| renderContractBlock | application/onboarding/OnboardingFlow.jsx | application/onboarding | b, i, values | none | none | none | 363 |
-| OnboardingContract | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | nombreCliente, dniCliente, selectedExtras, agree, sigDataUrl, busy, error | contractSave | OnboardingShell, Hl, FieldReadOnly, Field, SignaturePad, Btn | 384 |
-| Hl | application/onboarding/OnboardingFlow.jsx | application/onboarding | { children } | none | none | none | 574 |
-| FieldReadOnly | application/onboarding/OnboardingFlow.jsx | application/onboarding | { label, value } | none | none | none | 582 |
-| SignaturePad | application/onboarding/OnboardingFlow.jsx | application/onboarding | { onChange } | drawing, empty | none | none | 591 |
-| OnboardingPayment | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | busy, error, confirming | onboardingCheckout | OnboardingShell, Btn | 642 |
-| initQuestionnaireAnswers | application/onboarding/OnboardingFlow.jsx | application/onboarding | none | none | none | none | 731 |
-| qOptLabel | application/onboarding/OnboardingFlow.jsx | application/onboarding | options, v | none | none | none | 739 |
-| qFmtSlider | application/onboarding/OnboardingFlow.jsx | application/onboarding | def, val | none | none | none | 744 |
-| QSlider | application/onboarding/OnboardingFlow.jsx | application/onboarding | { value, min, max, step, left, right, suffix, onChange } | none | none | none | 750 |
-| QChoiceGrid | application/onboarding/OnboardingFlow.jsx | application/onboarding | { options, value, multi, max, onChange } | none | none | none | 766 |
-| QuestionField | application/onboarding/OnboardingFlow.jsx | application/onboarding | { def, value, onChange } | none | none | QSlider, QChoiceGrid | 798 |
-| OnboardingProfile | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | email, intereses, answers, screen, error, busy | profileSave | OnboardingShell, Field, QuestionField, Btn | 825 |
-| OnboardingShell | application/onboarding/OnboardingFlow.jsx | application/onboarding | { title, subtitle, stepNumber, totalSteps = 5, icon, onLogout, children } | none | none | Stepper | 1030 |
-| Stepper | application/onboarding/OnboardingFlow.jsx | application/onboarding | { current, total = 3 } | none | none | none | 1082 |
+| UploadSlot | application/onboarding/OnboardingFlow.jsx | application/onboarding | { label, preview, onPick } | none | none | Hl | 304 |
+| renderContractText | application/onboarding/OnboardingFlow.jsx | application/onboarding | text, values | none | none | Hl | 355 |
+| renderContractBlock | application/onboarding/OnboardingFlow.jsx | application/onboarding | b, i, values | none | none | none | 366 |
+| OnboardingContract | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | nombreCliente, dniCliente, selectedExtras, agree, sigDataUrl, busy, error | contractSave | OnboardingShell, Hl, FieldReadOnly, Field, SignaturePad, Btn | 387 |
+| Hl | application/onboarding/OnboardingFlow.jsx | application/onboarding | { children } | none | none | none | 579 |
+| FieldReadOnly | application/onboarding/OnboardingFlow.jsx | application/onboarding | { label, value } | none | none | none | 587 |
+| SignaturePad | application/onboarding/OnboardingFlow.jsx | application/onboarding | { onChange } | drawing, empty | none | none | 596 |
+| OnboardingPayment | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | busy, error, confirming | onboardingCheckout | OnboardingShell, Btn | 647 |
+| initQuestionnaireAnswers | application/onboarding/OnboardingFlow.jsx | application/onboarding | none | none | none | none | 736 |
+| qOptLabel | application/onboarding/OnboardingFlow.jsx | application/onboarding | options, v | none | none | none | 744 |
+| qFmtSlider | application/onboarding/OnboardingFlow.jsx | application/onboarding | def, val | none | none | none | 749 |
+| QSlider | application/onboarding/OnboardingFlow.jsx | application/onboarding | { value, min, max, step, left, right, suffix, onChange } | none | none | none | 755 |
+| QChoiceGrid | application/onboarding/OnboardingFlow.jsx | application/onboarding | { options, value, multi, max, onChange } | none | none | none | 771 |
+| QuestionField | application/onboarding/OnboardingFlow.jsx | application/onboarding | { def, value, onChange } | none | none | QSlider, QChoiceGrid | 803 |
+| OnboardingProfile | application/onboarding/OnboardingFlow.jsx | application/onboarding | { user, onLogout, onDone } | email, intereses, answers, screen, error, busy | profileSave | OnboardingShell, Field, QuestionField, Btn | 830 |
+| OnboardingShell | application/onboarding/OnboardingFlow.jsx | application/onboarding | { title, subtitle, stepNumber, totalSteps = 5, icon, onLogout, children } | none | none | Stepper | 1035 |
+| Stepper | application/onboarding/OnboardingFlow.jsx | application/onboarding | { current, total = 3 } | none | none | none | 1087 |
 | Factura | application/payments/InvoiceReceipt.jsx | application/payments | { open, onClose, user, payment } | none | none | Btn | 8 |
 | eur | application/payments/payment-utils.jsx | application/payments | value | none | none | none | 4 |
 | daysBetween | application/payments/payment-utils.jsx | application/payments | startIso, endIso | none | none | none | 11 |
@@ -83,13 +88,14 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 | Module | Bytes | Responsibility |
 |---|---:|---|
 | app.jsx | 11542 | composition root and authentication screens |
-| application/AdminPortal.jsx | 112483 | advisor portal and application administration |
+| application/AdminPortal.jsx | 115405 | advisor portal and application administration |
 | application/AdminWorkspace.jsx | 7418 | focused frontend component module |
 | application/ApplicationPortals.jsx | 53201 | application client portal composition |
-| application/ClientSections.jsx | 13296 | client payments, careers and documents |
-| application/documents/document-utils.js | 2230 | document phases, defaults and status mapping |
+| application/careers/CareerRequirementsTimeline.jsx | 3283 | focused frontend component module |
+| application/ClientSections.jsx | 13438 | client payments, careers and documents |
+| application/documents/document-utils.js | 2918 | document phases, defaults and status mapping |
 | application/Faqs.jsx | 6392 | focused frontend component module |
-| application/onboarding/OnboardingFlow.jsx | 51063 | application onboarding flow |
+| application/onboarding/OnboardingFlow.jsx | 51366 | application onboarding flow |
 | application/payments/InvoiceReceipt.jsx | 4666 | printable payment receipt |
 | application/payments/payment-utils.jsx | 837 | payment formatting and status UI |
 | client-utils.js | 1873 | browser-safe formatting, logging and image helpers |
