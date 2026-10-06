@@ -50,7 +50,7 @@ Checklist posterior:
 - una ráfaga controlada confirma que las dos Edge Functions limitan los grupos definidos;
 - webhooks y schedules aparecen activos en Netlify;
 - un recurso de imagen externo permitido, checkout y enlace firmado funcionan cuando el
-  cambio afecta a CSP, Stripe o Storage;
+  cambio afecta a CSP, Revolut o Storage;
 - logs no muestran secretos, contraseñas, documentos ni payloads personales completos.
 
 ## Base de datos
@@ -78,7 +78,7 @@ los gates normales.
 2. Separar errores de entrada/autorización, datos, proveedor y despliegue.
 3. Para Sheets/Holded revisar pendientes/fallidos de `integration_retry`; no reenviar email
    a ciegas.
-4. Para Stripe comparar event/payment IDs y estado persistido antes de repetir.
+4. Para Revolut comparar order/payment IDs y estado persistido antes de repetir.
 5. Para Meet/Drive usar los health endpoints administrativos y comprobar scopes/tokens.
 6. Si el frontend falla tras deploy, revisar primero assets, base `/portal/`, CSP y build log.
 

@@ -656,7 +656,7 @@ export function OnboardingPayment({ user, onLogout, onDone }) {
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("session_id") || params.get("payment_attempt")) setConfirming(true);
+      if (params.get("payment_attempt")) setConfirming(true);
     } catch (error) { reportClientError("optional_operation", error); }
   }, []);
 
@@ -669,7 +669,7 @@ export function OnboardingPayment({ user, onLogout, onDone }) {
     } catch (e) {
       if (e.data?.error === "contract_not_signed") setError("Antes debes firmar el contrato.");
       else if (e.data?.error === "already_paid") { await onDone(); return; }
-      else if (["stripe_not_configured", "revolut_not_configured", "payment_provider_not_configured"].includes(e.data?.error)) setError("La pasarela de pago no está configurada todavía. Contacta con tu asesor.");
+      else if (["revolut_not_configured", "payment_provider_not_configured"].includes(e.data?.error)) setError("La pasarela de pago no está configurada todavía. Contacta con tu asesor.");
       else setError(e.message || "No se pudo iniciar el pago.");
       setBusy(false);
     }

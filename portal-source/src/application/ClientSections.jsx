@@ -50,7 +50,7 @@ export function PagosCliente() {
       if (r && r.url) { window.location.href = r.url; return; }
       setLoadError("No se pudo iniciar el pago."); setPayBusy(false);
     } catch (e) {
-      if (["stripe_not_configured", "revolut_not_configured", "payment_provider_not_configured"].includes(e.data?.error)) setLoadError("La pasarela de pago no está configurada todavía. Contacta con tu asesor.");
+      if (["revolut_not_configured", "payment_provider_not_configured"].includes(e.data?.error)) setLoadError("La pasarela de pago no está configurada todavía. Contacta con tu asesor.");
       else setLoadError(e.message || "No se pudo iniciar el pago.");
       setPayBusy(false);
     }

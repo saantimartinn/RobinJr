@@ -16,12 +16,12 @@ Literal empty catches are rejected by `node scripts/check-empty-catches.js`.
 | A — safely ignorable | Explicit comment or warning | optional JSON parsing, cleanup of an obsolete object, browser history cleanup |
 | B — degraded but usable | Structured warning/result | optional dashboard panels, AI briefing, Drive copy, email delivery |
 | C — visible/retryable | UI error or persistent retry | Sheets, Holded, signed Storage URL, recoverable provider failures |
-| D — abort | non-2xx / thrown error | authentication, authorization, primary DB write, Stripe fulfillment, Calendar booking creation |
+| D — abort | non-2xx / thrown error | authentication, authorization, primary DB write, Revolut fulfillment, Calendar booking creation |
 
 ## Integration decisions
 
 - Supabase writes that define business state are class D.
-- Stripe webhook persistence is class D and returns `500` for retry.
+- Revolut webhook persistence is class D and returns `500` for retry.
 - Calendar event creation for a booking is class D.
 - Holded and Google Sheets are class C via `integration_retry`.
 - Resend and Drive are class B until an idempotent delivery/outbox contract exists.

@@ -27,7 +27,7 @@ test('emite logs correlacionados y descarta payloads o secretos', () => {
   let clock = 1_000;
   const log = createOperationLogger(
     { headers: { 'x-request-id': 'req-safe' } },
-    { operation: 'payments.verify', integration: 'stripe' },
+    { operation: 'payments.verify', integration: 'revolut' },
     { sink: out.sink, now: () => clock }
   );
   log.start({ actor_id: 'user-1', email: 'private@example.com', token: 'secret' });
@@ -40,7 +40,7 @@ test('emite logs correlacionados y descarta payloads o secretos', () => {
     level: 'info',
     request_id: 'req-safe',
     operation: 'payments.verify',
-    integration: 'stripe',
+    integration: 'revolut',
     entity_type: 'payment',
     entity_id: 'pay-1',
     result: 'ok',
@@ -52,7 +52,7 @@ test('emite logs correlacionados y descarta payloads o secretos', () => {
 });
 
 test('normaliza códigos de error sin registrar el mensaje', () => {
-  assert.equal(errorCode({ code: 'STRIPE/API Error!' }), 'stripe_api_error');
+  assert.equal(errorCode({ code: 'REVOLUT/API Error!' }), 'revolut_api_error');
   assert.equal(errorCode(new Error('retry_failed')), 'retry_failed');
   assert.equal(errorCode(new Error('contiene datos privados')), 'error');
 });

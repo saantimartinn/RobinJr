@@ -41,9 +41,9 @@ Regresiones unitarias y de límites arquitectónicos ejecutadas por Node.js.
 | [`profile-avatar.test.js`](../../../test/profile-avatar.test.js) | Pruebas automatizadas de profile avatar.test. | `../netlify/functions/profile-avatar` | Al fijar o actualizar el comportamiento cubierto. |
 | [`rate-limit-config.test.mjs`](../../../test/rate-limit-config.test.mjs) | Pruebas automatizadas de rate limit config.test. | `../netlify/edge-functions/rate-limit-identity.mjs`<br>`../netlify/edge-functions/rate-limit-expensive.mjs` | Al fijar o actualizar el comportamiento cubierto. |
 | [`revolut.test.js`](../../../test/revolut.test.js) | Pruebas automatizadas de revolut.test. | `../lib/revolut` | Al fijar o actualizar el comportamiento cubierto. |
+| [`sandbox-mode.test.js`](../../../test/sandbox-mode.test.js) | Pruebas automatizadas de sandbox mode.test. | `../lib/sandbox-mode` | Al fijar o actualizar el comportamiento cubierto. |
 | [`security-headers.test.js`](../../../test/security-headers.test.js) | Pruebas automatizadas de security headers.test. | `../lib/http` | Al fijar o actualizar el comportamiento cubierto. |
 | [`storage.test.js`](../../../test/storage.test.js) | Pruebas automatizadas de storage.test. | `../lib/storage` | Al fijar o actualizar el comportamiento cubierto. |
-| [`stripe.test.js`](../../../test/stripe.test.js) | Pruebas automatizadas de stripe.test. | `../lib/stripe` | Al fijar o actualizar el comportamiento cubierto. |
 | [`student-phone.test.js`](../../../test/student-phone.test.js) | Pruebas automatizadas de student phone.test. | `../lib/student-phone` | Al fijar o actualizar el comportamiento cubierto. |
 | [`validation.test.js`](../../../test/validation.test.js) | Pruebas automatizadas de validation.test. | `../lib/validation` | Al fijar o actualizar el comportamiento cubierto. |
 | [`webhook-auth.test.js`](../../../test/webhook-auth.test.js) | Pruebas automatizadas de webhook auth.test. | `../lib/http`<br>`../netlify/functions/meet-transcript-poll` | Al fijar o actualizar el comportamiento cubierto. |

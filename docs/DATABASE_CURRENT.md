@@ -23,11 +23,11 @@ cliente de servidor y aplican sesión, rol y ownership en código. Los buckets `
 | `documents` | Requisitos y ficheros del alumno | `user_id → users.id` | endpoints de documentos, dashboard y asistentes |
 | `notification_recipients` | Estado por destinatario | `notification_id → notifications.id` | notificaciones de alumnos/admins |
 | `notifications` | Cabeceras de avisos | — | notificaciones de alumnos/admins |
-| `payments` | Cuotas, cobros y metadata fiscal | `user_id → users.id` | pagos, Stripe, Holded, Sheets y dashboard |
+| `payments` | Cuotas, cobros y metadata fiscal | `user_id → users.id` | pagos, Revolut, Holded, Sheets y dashboard |
 | `payment_attempts` | Correlación server-only de checkouts alojados | `user_id → users.id`, `payment_id → payments.id` | retorno y webhook de Revolut |
 | `processed_meet_docs` | Idempotencia de transcripciones | `user_id → users.id` | polling de Meet |
 | `users` | Identidad, onboarding y expediente | — | autenticación y todos los dominios de aplicación |
-| `webhook_log` | Registro técnico y reintentos | — | email, Holded, onboarding, Meet, Notion y Stripe |
+| `webhook_log` | Registro técnico y reintentos | — | email, Holded, onboarding, Meet, Notion y Revolut |
 
 ## Reglas relevantes
 

@@ -67,11 +67,10 @@ export default function PortalRobin() {
   useEffect(() => {
     let params;
     try { params = new URLSearchParams(window.location.search); } catch (_error) { return; }
-    const sessionId = params.get("session_id");
     const attemptId = params.get("payment_attempt");
-    if (!sessionId && !attemptId) return;
+    if (!attemptId) return;
     (async () => {
-      try { await paymentsVerify({ sessionId, attemptId }); } catch (error) { reportClientError("optional_operation", error); }
+      try { await paymentsVerify({ attemptId }); } catch (error) { reportClientError("optional_operation", error); }
       try { setAuthenticatedUser(await apiMe()); } catch (error) { reportClientError("optional_operation", error); }
       setActive("pagos");
       try { window.history.replaceState({}, "", window.location.pathname); } catch (error) { reportClientError("optional_operation", error); }

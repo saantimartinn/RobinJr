@@ -227,10 +227,8 @@ export async function paymentsCheckout(installment) {
   return api.post("/api/payments/checkout", { installment });
 }
 // Confirma el pago al volver de la pasarela (idempotente).
-export async function paymentsVerify({ sessionId, attemptId }) {
-  return api.post("/api/payments/verify", attemptId
-    ? { attempt_id: attemptId }
-    : { session_id: sessionId });
+export async function paymentsVerify({ attemptId }) {
+  return api.post("/api/payments/verify", { attempt_id: attemptId });
 }
 export async function adminPaymentsList(userId) {
   return api.get("/api/admin/payments?user_id=" + encodeURIComponent(userId));

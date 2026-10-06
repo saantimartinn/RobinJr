@@ -40,7 +40,7 @@ function method(source, scheduled) {
 
 function auth(source, name, scheduled) {
   if (scheduled && !source.includes('readSessionFromEvent')) return 'Netlify schedule';
-  if (/WEBHOOK_SECRET|VERIFICATION_TOKEN|verifyConfiguredSecret|stripe-signature|revolut-signature|verifyWebhookSignature|safeEqual\(/.test(source)) return 'Provider secret/signature';
+  if (/WEBHOOK_SECRET|VERIFICATION_TOKEN|verifyConfiguredSecret|revolut-signature|verifyWebhookSignature|safeEqual\(/.test(source)) return 'Provider secret/signature';
   if (source.includes('readSessionFromEvent')) return 'Session cookie';
   if (name === 'auth-login') return 'Public';
   return 'Public/internal';
@@ -65,7 +65,7 @@ function validation(source) {
   const checks = [];
   if (source.includes('verifyOrigin')) checks.push('origin');
   if (source.includes('parseJsonBody')) checks.push('JSON');
-  if (/WEBHOOK_SECRET|verifyConfiguredSecret|stripe-signature|revolut-signature|verifyWebhookSignature|safeEqual\(/.test(source)) checks.push('signature/secret');
+  if (/WEBHOOK_SECRET|verifyConfiguredSecret|revolut-signature|verifyWebhookSignature|safeEqual\(/.test(source)) checks.push('signature/secret');
   if (source.includes('ownsRecord')) checks.push('ownership');
   if (/missing_|invalid_|required/.test(source)) checks.push('field checks');
   return unique(checks).join(', ') || 'method/auth only';
@@ -79,7 +79,6 @@ function response(source) {
 
 function integrations(source) {
   const map = [
-    ['stripe', /lib\/stripe|stripeLib|require\(['"]stripe['"]\)/],
     ['Revolut', /lib\/revolut|require\(['"]\.\/revolut['"]\)|revolut/i],
     ['Google Drive', /google-drive/],
     ['Google Calendar/Meet', /google-calendar|googleapis|Meet/],

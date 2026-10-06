@@ -1,5 +1,5 @@
 /**
- * POST /api/payments/verify  Body: { session_id } | { attempt_id }
+ * POST /api/payments/verify  Body: { attempt_id }
  * Confirma inmediatamente al volver de la pasarela recuperando la operación
  * y cumpliendo el pago de forma idempotente. El webhook sigue siendo el
  * mecanismo autoritativo; esto sólo mejora la UX del retorno.
@@ -7,7 +7,6 @@
 const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
-const stripeLib = require('../../lib/stripe');
 const revolut = require('../../lib/revolut');
 const attempts = require('../../lib/payment-attempts');
 const { assertFulfilled } = require('../../lib/payment-fulfill');
@@ -20,7 +19,7 @@ exports.handler = async (event) => {
     operation: 'payments.verify',
     actor_id: session && session.uid,
     actor_role: session && session.role,
-    integration: 'stripe',
+    integration: 'revolut',
   });
   log.start();
   if (event.httpMethod !== 'POST') {
@@ -37,57 +36,30 @@ exports.handler = async (event) => {
   }
   const body = parseJsonBody(event);
   const attemptId = body && stringValue(body.attempt_id, { max: 64, pattern: /^[0-9a-f-]{36}$/i });
-  const checkoutSessionId = body && stringValue(body.session_id, { max: 255, pattern: /^cs_[a-zA-Z0-9_]+$/ });
-  if (!attemptId && !checkoutSessionId) {
-    const code = body && (body.attempt_id || body.session_id) ? 'invalid_payment_reference' : 'missing_payment_reference';
+  if (!attemptId) {
+    const code = body && body.attempt_id ? 'invalid_payment_reference' : 'missing_payment_reference';
     log.warn('rejected', { error_code: code });
     return json({ error: code }, { statusCode: 400 });
   }
 
   try {
     const sb = getSupabase();
-    if (attemptId) {
-      if (!revolut.isConfigured()) return json({ error: 'revolut_not_configured' }, { statusCode: 503 });
-      const attempt = await attempts.getAttemptForUser(sb, attemptId, session.uid);
-      if (!attempt) return json({ error: 'not_found' }, { statusCode: 404 });
-      if (attempt.provider !== 'revolut' || !attempt.provider_order_id) {
-        return json({ error: 'invalid_payment_reference' }, { statusCode: 400 });
-      }
-      const order = await revolut.retrieveOrder(attempt.provider_order_id);
-      if (order.state !== 'completed') {
-        await attempts.markAttempt(sb, attempt.id, order.state || 'pending');
-        return json({ ok: false, status: order.state || 'pending' });
-      }
-      const result = await revolut.fulfillOrder(sb, order, attempt);
-      assertFulfilled(result);
-      await attempts.markAttempt(sb, attempt.id, 'completed');
-      log.success({ entity_type: 'revolut_order', entity_id: order.id });
-      return json({ ok: true, status: 'paid', kind: attempt.kind, result });
+    if (!revolut.isConfigured()) return json({ error: 'revolut_not_configured' }, { statusCode: 503 });
+    const attempt = await attempts.getAttemptForUser(sb, attemptId, session.uid);
+    if (!attempt) return json({ error: 'not_found' }, { statusCode: 404 });
+    if (attempt.provider !== 'revolut' || !attempt.provider_order_id) {
+      return json({ error: 'invalid_payment_reference' }, { statusCode: 400 });
     }
-
-    if (!stripeLib.isConfigured()) return json({ error: 'stripe_not_configured' }, { statusCode: 503 });
-    const stripe = stripeLib.getStripe();
-    const cs = await stripe.checkout.sessions.retrieve(checkoutSessionId);
-    if (!cs) {
-      log.warn('rejected', { error_code: 'not_found' });
-      return json({ error: 'not_found' }, { statusCode: 404 });
+    const order = await revolut.retrieveOrder(attempt.provider_order_id);
+    if (order.state !== 'completed') {
+      await attempts.markAttempt(sb, attempt.id, order.state || 'pending');
+      return json({ ok: false, status: order.state || 'pending' });
     }
-
-    const md = cs.metadata || {};
-    // Seguridad: la sesión debe pertenecer al usuario autenticado.
-    if (String(md.user_id || cs.client_reference_id || '') !== String(session.uid)) {
-      log.warn('rejected', { error_code: 'forbidden' });
-      return json({ error: 'forbidden' }, { statusCode: 403 });
-    }
-    if (cs.payment_status !== 'paid') {
-      log.result('not_paid', { entity_type: 'checkout_session', entity_id: cs.id });
-      return json({ ok: false, status: cs.payment_status || 'unpaid' });
-    }
-
-    const result = await stripeLib.fulfillCheckout(sb, cs);
-    stripeLib.assertFulfilled(result);
-    log.success({ entity_type: 'checkout_session', entity_id: cs.id });
-    return json({ ok: true, status: 'paid', kind: md.kind || null, result });
+    const result = await revolut.fulfillOrder(sb, order, attempt);
+    assertFulfilled(result);
+    await attempts.markAttempt(sb, attempt.id, 'completed');
+    log.success({ entity_type: 'revolut_order', entity_id: order.id });
+    return json({ ok: true, status: 'paid', kind: attempt.kind, result });
   } catch (e) {
     log.failure(e);
     return serverError(e);

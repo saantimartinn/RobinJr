@@ -26,7 +26,7 @@ provider codes or safe machine-style messages are normalized into `error_code`.
 ## Covered operations
 
 - `auth.login`
-- `payments.verify`, `webhook.stripe` and `webhook.revolut`
+- `payments.verify` and `webhook.revolut`
 - `onboarding.checkout`
 - `bookings.create`
 - `webhook.notion` and `webhook.meet`

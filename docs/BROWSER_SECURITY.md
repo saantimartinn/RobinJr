@@ -20,9 +20,9 @@ data does not depend on CDN rule application.
 ## CSP rationale
 
 Browser API calls are same-origin, except PUT requests to short-lived signed upload URLs
-at `ljavwdqrffkkblmyatuq.supabase.co`. Stripe Checkout and
-the billing portal are reached by top-level navigation to server-returned URLs, not
-by loading Stripe scripts or frames. The portal has no iframes or WebSockets.
+at `ljavwdqrffkkblmyatuq.supabase.co`. Revolut Checkout is reached by top-level
+navigation to a server-returned URL, not by loading provider scripts or frames. The
+portal has no iframes or WebSockets.
 
 - scripts: same origin only;
 - connections: same origin plus the single authorized Supabase Storage host for signed uploads;
@@ -49,7 +49,7 @@ server and authenticate with secrets/signatures, so they do not need browser COR
 
 After Netlify deploys this commit, inspect `/portal/` and one `/api/*` response with
 browser devtools or `curl -I`. Confirm CSP/HSTS/Permissions-Policy and test login,
-remote images, document previews and Stripe redirection. Local tests validate the
+remote images, document previews and Revolut redirection. Local tests validate the
 declared policy but cannot prove CDN header application.
 
 No Supabase or external integration was accessed while creating these headers.

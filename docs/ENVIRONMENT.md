@@ -9,10 +9,9 @@
 | `JWT_SECRET` | Sign and verify session cookies | Authentication cannot issue/verify sessions |
 | `SUPABASE_URL` | Backend data API endpoint | Backend data access fails |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only data credential | Backend data access fails |
-| `PAYMENT_PROVIDER` | Select `stripe` or `revolut` | Auto-selects a configured provider; production should set it explicitly |
+| `PAYMENT_PROVIDER` | `revolut` | Identifies the sole payment provider and isolates sandbox deploys |
 
-One payment provider is required in production. Stripe needs `STRIPE_SECRET_KEY` and
-`STRIPE_WEBHOOK_SECRET`. Revolut needs `REVOLUT_MERCHANT_SECRET_KEY`, `REVOLUT_API_BASE`
+Revolut is required in production and needs `REVOLUT_MERCHANT_SECRET_KEY`, `REVOLUT_API_BASE`
 and `REVOLUT_WEBHOOK_SIGNING_SECRET`; `REVOLUT_API_VERSION` pins the API contract.
 Sandbox uses `https://sandbox-merchant.revolut.com`, while production uses
 `https://merchant.revolut.com`. The adapter refuses to use the Sandbox base when

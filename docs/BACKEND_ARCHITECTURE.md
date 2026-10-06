@@ -8,7 +8,7 @@ Netlify Functions son los entrypoints HTTP y programados. La lógica compartida 
 | Dominio | Responsabilidad del entrypoint | Servicios compartidos |
 |---|---|---|
 | Auth | método, origen, credenciales y cookie | `auth`, `identity`, `authorization` |
-| Pagos | sesión, intento y respuesta del proveedor | `payments`, `payment_attempts`, `stripe`, `revolut`, configuración financiera |
+| Pagos | sesión, intento y respuesta del proveedor | `payments`, `payment_attempts`, `revolut`, configuración financiera |
 | Documentos | auth/ownership, ticket firmado y confirmación | `storage`, `document-drive`, `google-drive` |
 | Reservas | sesión, input y transacción Calendar | `booking-availability`, `booking-create`, `google-calendar` |
 | Administración | sesión/rol y respuesta | `admin-dashboard`, `career-suggestions` |

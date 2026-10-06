@@ -7,7 +7,6 @@
 const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, serverError, verifyOrigin } = require('../../lib/http');
-const stripeLib = require('../../lib/stripe');
 const revolut = require('../../lib/revolut');
 const paymentProvider = require('../../lib/payment-provider');
 const attempts = require('../../lib/payment-attempts');
@@ -67,59 +66,30 @@ exports.handler = async (event) => {
     const amountMinor = toMinorUnits(amount);
     const nombre = [u.nombre, u.apellidos].filter(Boolean).join(' ') || (u.email || '');
 
-    if (provider === 'revolut') {
-      const attempt = await attempts.createAttempt(sb, {
-        userId: u.id,
-        kind: 'onboarding',
-        provider,
+    const attempt = await attempts.createAttempt(sb, {
+      userId: u.id,
+      kind: 'onboarding',
+      provider,
+      amountMinor,
+      currency: 'EUR',
+    });
+    try {
+      const order = await revolut.createOrder({
         amountMinor,
         currency: 'EUR',
+        description: ('Project Robin · Primera cuota' + (nombre ? ' · ' + nombre : '')).slice(0, 240),
+        email: u.email,
+        attemptId: attempt.id,
+        kind: 'onboarding',
+        redirectUrl: `${revolut.getBaseUrl(event)}/portal/?payment_attempt=${attempt.id}`,
       });
-      try {
-        const order = await revolut.createOrder({
-          amountMinor,
-          currency: 'EUR',
-          description: ('Project Robin · Primera cuota' + (nombre ? ' · ' + nombre : '')).slice(0, 240),
-          email: u.email,
-          attemptId: attempt.id,
-          kind: 'onboarding',
-          redirectUrl: `${revolut.getBaseUrl(event)}/portal/?payment_attempt=${attempt.id}`,
-        });
-        await attempts.attachProviderOrder(sb, attempt.id, order);
-        log.success({ entity_type: 'revolut_order', entity_id: order.id });
-        return json({ url: order.checkout_url, id: order.id, attempt_id: attempt.id, provider });
-      } catch (error) {
-        try { await attempts.markAttempt(sb, attempt.id, 'failed'); } catch (_) { /* best effort */ }
-        throw error;
-      }
+      await attempts.attachProviderOrder(sb, attempt.id, order);
+      log.success({ entity_type: 'revolut_order', entity_id: order.id });
+      return json({ url: order.checkout_url, id: order.id, attempt_id: attempt.id, provider });
+    } catch (error) {
+      try { await attempts.markAttempt(sb, attempt.id, 'failed'); } catch (_) { /* best effort */ }
+      throw error;
     }
-
-    const stripe = stripeLib.getStripe();
-    const base = stripeLib.getBaseUrl(event);
-
-    const cs = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
-      line_items: [{
-        quantity: 1,
-        price_data: {
-          currency: 'eur',
-          unit_amount: amountMinor,
-          product_data: {
-            name: 'Project Robin · Primera cuota',
-            description: ('Pago inicial del programa' + (nombre ? ' · ' + nombre : '')).slice(0, 240),
-          },
-        },
-      }],
-      customer_email: u.email || undefined,
-      client_reference_id: String(u.id),
-      success_url: `${base}/portal/?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${base}/portal/?pay=cancel`,
-      metadata: { kind: 'onboarding', user_id: String(u.id), lead_id: u.lead_id || '' },
-    });
-
-    log.success({ entity_type: 'checkout_session', entity_id: cs.id });
-    return json({ url: cs.url, id: cs.id, provider });
   } catch (e) {
     log.failure(e);
     return serverError(e);

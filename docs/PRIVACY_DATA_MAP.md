@@ -17,7 +17,7 @@ request procedures.
 | Academic documents/records | User/admin upload | Application Storage and Google Drive; advisor receives a panel notification without attachment | Application processing and review | No expiry defined | Necessity and retention of the auxiliary Drive copy | Browser uploads directly with a short-lived signed ticket; DB stores paths only; email excludes the binary; 20 MB cap | Remove DB metadata plus Storage and Drive copies |
 | Meet transcript and meeting history | Google Meet/Drive | Anthropic, application user history, Google Drive transcript folder | Meeting summary and case history | No expiry defined | Recording/transcription notice and participant consent | Transcript previews removed from persistent logs; full text still required for summarization | Delete Drive transcript and compiled history; provider source retention separately |
 | AI/admin chat and messages | User/admin chat | Application DB and Anthropic | Assistance and conversation continuity | AI chat cleanup deletes records older than 7 days | Notice, acceptable-use and whether support review occurs | Context windows are truncated; avoid documents unless required | Scheduled application cleanup; Anthropic retention/settings still to verify |
-| Payments | User/admin, Stripe webhook | Application DB, Stripe, Holded, Google Sheets | Payment, reconciliation and invoicing | Financial retention not defined in code | Statutory accounting retention and role access | Logs retain provider/internal IDs, not Stripe metadata | Stripe/Holded/Sheets/DB deletion or restriction subject to legal hold |
+| Payments | User/admin, Revolut webhook | Application DB, Revolut, Holded, Google Sheets | Payment, reconciliation and invoicing | Financial retention not defined in code | Statutory accounting retention and role access | Logs retain provider/internal IDs, not card metadata | Revolut/Holded/Sheets/DB deletion or restriction subject to legal hold |
 | Email content and attachments | Application workflows | Resend and recipients | Transactional delivery | Provider/mailbox retention unknown | Processor terms, recipient correctness and attachment necessity | Fallback logs no longer persist recipient, subject, body or attachment | Provider/mailbox deletion cannot be guaranteed by application alone |
 | Operational logs | Functions/providers | Netlify logs and `webhook_log` | Troubleshooting, retries and audit | No general expiry defined | Legitimate-interest assessment, access and retention | Allowlisted structured logs; persistent payloads exclude known PII fields/previews | Define and authorize retention job after legal/operational decision |
 
@@ -27,7 +27,7 @@ request procedures.
 - Netlify: hosting, Functions and runtime logs.
 - Anthropic: OCR, chat, CV, career and transcript processing.
 - Google Workspace: Drive, Sheets, Calendar and Meet.
-- Stripe: checkout and payment processing.
+- Revolut: checkout and payment processing.
 - Holded: contacts, invoices and invoice PDFs.
 - Resend/email recipients: transactional messages and attachments.
 - Notion and Meet: inbound client and meeting data.

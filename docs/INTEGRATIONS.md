@@ -7,7 +7,7 @@ opcional ausente debe fallar de forma explícita o quedar registrada, nunca simu
 | Proveedor | Uso | Configuración principal | Autoridad/idempotencia | Fallo y recuperación |
 |---|---|---|---|---|
 | Supabase | Tablas y Storage privado | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, buckets opcionales | Backend con service role; navegador limitado a tickets firmados por objeto; IDs/constraints de negocio | Error crítico de datos; no hay fallback local |
-| Stripe / Revolut | Checkout alojado y cobros de aplicación | `PAYMENT_PROVIDER` + credenciales y secreto webhook del proveedor | Firma de webhook; `payment_attempts` correlaciona órdenes Revolut; cumplimiento idempotente | Reentrega del proveedor; la escritura financiera principal aborta ante error |
+| Revolut | Checkout alojado y cobros de aplicación | Credenciales Merchant y secreto del webhook | Firma de webhook; `payment_attempts` correlaciona órdenes; cumplimiento idempotente | Reentrega del proveedor; la escritura financiera principal aborta ante error |
 | Google Drive | Carpetas y documentos de alumnos | OAuth compartido, refresh token, carpeta raíz | Nombres/rutas deterministas; resultado registrado | Best-effort en copias secundarias; health/sync admin para diagnóstico |
 | Google Sheets | Sincronización operativa de alumnos | OAuth, refresh token; por defecto workbook `1fAzgWD-xmhbupFCKDx-wpBQG5wBJT9uv3MRScZ_EiRY`, pestaña `2041257143` | Upsert por PR del alumno | Cola `integration_retry`, cada 10 min, máximo 5 intentos |
 | Google Calendar/Meet | Disponibilidad, evento y transcripción | OAuth + refresh token por advisor; secreto Meet | Event ID y `processed_meet_docs` evitan duplicados | Calendar es crítico al reservar; polling/webhook de Meet quedan observables |
@@ -21,7 +21,7 @@ opcional ausente debe fallar de forma explícita o quedar registrada, nunca simu
 | Proveedor | Entradas | Salidas | Entrada webhook/job | Retry | Fuente de verdad |
 |---|---|---|---|---|---|
 | Supabase | IDs, metadata, binarios directos con ticket y mutaciones validadas | filas, objetos privados, URLs firmadas | No aplica | Error al llamante; sin réplica local | Tablas de negocio y Storage |
-| Stripe / Revolut | cliente, cuota e importe backend | URL alojada y IDs de orden/pago | `/api/stripe/webhook` o `/api/revolut/webhook`, firma del proveedor | Reentrega + verificación al volver al portal | `payments`; `payment_attempts` correlaciona Revolut |
+| Revolut | cliente, cuota e importe backend | URL alojada y IDs de orden/pago | `/api/revolut/webhook`, firma del proveedor | Reentrega + verificación al volver al portal | `payments`; `payment_attempts` correlaciona Revolut |
 | Drive | identidad y binario/documento | folder/file IDs y rutas | Jobs admin/Meet internos | Manual/best-effort según flujo | Metadata DB; Drive conserva copia binaria auxiliar |
 | Sheets | `user_id` y read model calculado | fila operativa upsert | `integration-retry` cada 10 min | Hasta 5 intentos | Tablas ROBIN, nunca la hoja |
 | Calendar/Meet | advisor, slot, asistentes/transcripción | evento, Meet URL/código, texto | webhook secreto + poll cada 15 min | Provider/poll; idempotencia de documento | `bookings` e historial del usuario |
@@ -45,7 +45,6 @@ ser idempotentes.
 
 ## Webhooks y tareas programadas
 
-- Stripe verifica `stripe-signature` con `STRIPE_WEBHOOK_SECRET`.
 - Revolut verifica `Revolut-Request-Timestamp` y `Revolut-Signature` con una tolerancia
   de cinco minutos. Los eventos `ORDER_COMPLETED` recuperan de nuevo la orden antes
   de cumplir el pago. Un cobro Sandbox queda marcado como simulado y no factura en Holded.

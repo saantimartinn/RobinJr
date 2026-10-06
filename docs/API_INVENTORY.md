@@ -1,6 +1,6 @@
 # API inventory
 
-Generated from `netlify.toml` and static analysis of 65 Netlify Functions.
+Generated from `netlify.toml` and static analysis of 64 Netlify Functions.
 Scheduled/internal Functions without a redirect are listed with their direct function path. This is an
 engineering inventory, not a substitute for runtime or legal review.
 
@@ -23,7 +23,7 @@ engineering inventory, not a substitute for runtime or legal review.
 | admin-drive-rename | GET/POST | /api/admin/drive-rename | Session cookie | application admin | JSON body + query | origin, JSON, field checks | JSON | bad_origin, unauthorized, forbidden, user_not_found, missing_target | users | Google Drive, Google Calendar/Meet, Notion |
 | admin-drive-sync | GET/POST | /api/admin/drive-sync | Session cookie | application admin | JSON body + query | origin, JSON, field checks | JSON | bad_origin, unauthorized, forbidden, user_not_found, missing_target | users, webhook_log | Google Drive, Holded |
 | admin-historial-add | POST | /api/admin/historial/add | Session cookie | application admin | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, missing_user_id, missing_raw_notes, forbidden, user_not_found | users | Anthropic |
-| admin-integration-snapshot | GET | /api/admin/integration-snapshot | Session cookie | application admin | none | method/auth only | JSON | unauthorized, forbidden | payments, users, webhook_log | stripe, Revolut, Holded |
+| admin-integration-snapshot | GET | /api/admin/integration-snapshot | Session cookie | application admin | none | method/auth only | JSON | unauthorized, forbidden | payments, users, webhook_log | Revolut, Holded |
 | admin-notifications | GET/POST | /api/admin/notifications | Session cookie | application admin | JSON body | origin, JSON, field checks | JSON | unauthorized, forbidden, bad_origin, missing_title, missing_content, no_recipients | notification_recipients, notifications, users | none |
 | admin-payments-add | POST | /api/admin/payments/add | Session cookie | application admin | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, missing_user_id, missing_concept, invalid_amount | payments, users, webhook_log | Google Sheets, Holded, Notion |
 | admin-payments-delete | POST | /api/admin/payments/delete | Session cookie | application admin | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, missing_params, forbidden, not_found | payments, users, webhook_log | Google Sheets, Holded, Notion |
@@ -57,20 +57,19 @@ engineering inventory, not a substitute for runtime or legal review.
 | notifications-ack | POST | /api/notifications/ack | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | unauthorized, bad_origin, missing_notification_id, not_found, update_failed | notification_recipients, notifications, users, webhook_log | Resend/email |
 | notifications-list | GET | /api/notifications | Session cookie | authenticated | none | method/auth only | JSON | unauthorized | notification_recipients, notifications | none |
 | notion-webhook | POST | /api/notion/webhook | Provider secret/signature | provider/system | JSON body + query | JSON, signature/secret, field checks | JSON | missing_secret_configuration, invalid_secret, invalid_json, parse_error, missing_lead_id, identity_collision | users, webhook_log | Google Drive, Google Sheets, Holded, Resend/email, Notion |
-| onboarding-checkout | POST | /api/onboarding/checkout | Session cookie | authenticated | none | origin | JSON | bad_origin, unauthorized, payment_provider_not_configured, contract_not_signed, already_paid | payment_attempts, payments, users | stripe, Revolut |
-| onboarding-contract | POST | /api/onboarding/contract | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, missing_nombre_cliente, missing_dni_cliente, missing_signature | users, webhook_log | Google Sheets, Holded, Resend/email, Notion |
-| onboarding-dni-extract | POST | /api/onboarding/dni/extract | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, invalid_action | users | none |
-| onboarding-dni-save | POST | /api/onboarding/dni/save | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, missing_fields, invalid_birthdate, invalid_student_phone | users | Google Drive, Google Calendar/Meet |
+| onboarding-checkout | POST | /api/onboarding/checkout | Session cookie | authenticated | none | origin | JSON | bad_origin, unauthorized, payment_provider_not_configured, contract_not_signed, already_paid | payment_attempts, payments, users | Revolut |
+| onboarding-contract | POST | /api/onboarding/contract | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, missing_nombre_cliente, missing_dni_cliente, missing_signature | users, webhook_log | Revolut, Google Sheets, Holded, Resend/email, Notion |
+| onboarding-dni-extract | POST | /api/onboarding/dni/extract | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, invalid_action | users | Revolut |
+| onboarding-dni-save | POST | /api/onboarding/dni/save | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, missing_fields, invalid_birthdate, invalid_student_phone | users | Revolut, Google Drive, Google Calendar/Meet |
 | onboarding-origin | POST | /api/onboarding/origin | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, invalid_origin, invalid_level, missing_pais | users | none |
 | onboarding-profile | POST | /api/onboarding/profile | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, invalid_email, missing_intereses, invalid_intereses | users, webhook_log | Google Sheets, Holded, Notion |
 | onboarding-state | GET | /api/onboarding/state | Session cookie | authenticated | none | method/auth only | JSON | unauthorized | users | none |
-| payments-checkout | POST | /api/payments/checkout | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, payment_provider_not_configured, invalid_json, invalid_installment, not_found | payment_attempts, payments, users | stripe, Revolut |
+| payments-checkout | POST | /api/payments/checkout | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, payment_provider_not_configured, invalid_json, invalid_installment, not_found | payment_attempts, payments, users | Revolut |
 | payments-list | GET | /api/payments | Session cookie | authenticated | none | method/auth only | JSON | unauthorized | payments, users | none |
-| payments-verify | POST | /api/payments/verify | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, revolut_not_configured, not_found, invalid_payment_reference, stripe_not_configured | payment_attempts, payments, users | stripe, Revolut |
+| payments-verify | POST | /api/payments/verify | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, revolut_not_configured, not_found, invalid_payment_reference | payment_attempts, payments, users | Revolut |
 | profile-avatar | POST | /api/profile/avatar | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json | users | none |
 | profile-lived-abroad | POST | /api/profile/lived-abroad | Session cookie | application admin | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, forbidden, locked, invalid_country | users | none |
 | revolut-webhook | POST | /api/revolut/webhook | Provider secret/signature | provider/system | raw/JSON body | origin, signature/secret, field checks | HTTP response | server_error/none explicit | payment_attempts, payments, users, webhook_log | Revolut |
-| stripe-webhook | POST | /api/stripe/webhook | Provider secret/signature | provider/system | raw/JSON body | origin, signature/secret, field checks | JSON | server_error/none explicit | payments, users, webhook_log | stripe |
 
 ## Maintenance
 

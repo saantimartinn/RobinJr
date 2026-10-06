@@ -40,11 +40,11 @@ vuelvan a aparecer rutas o módulos ajenos a los portales de alumnos y administr
 - signed session cookies and tamper rejection;
 - admin authorization and client record ownership;
 - document Storage behavior;
-- Stripe fulfillment result handling and money rounding;
+- Revolut fulfillment result handling and money rounding;
 - discount activation, redemption limit, percentage and duration;
 - booking windows and overlap rejection;
 - webhook secret fail-closed behavior;
 - financial config, retries and structured observability.
 
-Tests use pure helpers and in-memory fakes. They must not contact Supabase, Stripe,
+Tests use pure helpers and in-memory fakes. They must not contact Supabase, Revolut,
 Google, Anthropic, Holded, Resend or any production service.

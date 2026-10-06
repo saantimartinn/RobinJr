@@ -24,7 +24,7 @@ than hard-coded because domain endpoint splits can change it.
 - base64 data URLs, canonical MIME and maximum decoded size;
 - bounded offset/limit pagination.
 
-Adoption is intentionally gradual. Current critical uses cover Stripe Checkout IDs,
+Adoption is intentionally gradual. Current critical uses cover Revolut payment-attempt IDs,
 booking dates/duration, signed upload metadata, document MIME/20 MB limit, identity-image
 MIME/10 MB limit and manually adjusted payment amounts. Document and DNI/passport binaries
 are uploaded directly to private Storage; Netlify only authorizes a short-lived ticket and
