@@ -2,6 +2,7 @@ const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
 const { missingPhoneColumn } = require('../../lib/student-phone');
+const { isIsolatedSandbox } = require('../../lib/sandbox-mode');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return methodNotAllowed(['POST']);
@@ -43,7 +44,7 @@ exports.handler = async (event) => {
     if (error) throw error;
 
     // Renombrar la carpeta de Drive al nombre del DNI (best-effort, no bloquea).
-    try {
+    if (!isIsolatedSandbox()) try {
       const drive = require('../../lib/google-drive');
       const { data: u2 } = await sb.from('users')
         .select('id, lead_id, nombre, apellidos, gdrive_folders')

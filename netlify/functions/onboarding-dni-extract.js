@@ -7,6 +7,9 @@ const {
   createDniUploadTicket,
   loadDniImages,
 } = require('../../lib/dni-upload');
+const storage = require('../../lib/storage');
+const { BUCKET } = require('../../lib/supabase');
+const { isIsolatedSandbox } = require('../../lib/sandbox-mode');
 
 function inputError(error) {
   return error && error.statusCode === 400;
@@ -57,6 +60,12 @@ exports.handler = async (event) => {
         : null,
       docType: images.docType,
     });
+
+    if (isIsolatedSandbox()) {
+      await storage.removeObject(sb, images.anverso.path, { bucket: BUCKET });
+      if (images.reverso) await storage.removeObject(sb, images.reverso.path, { bucket: BUCKET });
+      return json({ ok: true, fields });
+    }
 
     const { error: updateError } = await sb
       .from('users')

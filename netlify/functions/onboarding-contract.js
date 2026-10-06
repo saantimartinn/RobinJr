@@ -16,6 +16,7 @@ const { buildContractPdf } = require('../../lib/contract-pdf');
 const { DELFT_PRICE_VERSION, contractPricingVersion } = require('../../shared/financial-config.cjs');
 const storage = require('../../lib/storage');
 const { variantKey } = require('../../shared/contract-content.cjs');
+const { isIsolatedSandbox } = require('../../lib/sandbox-mode');
 
 function esc(s) {
   return String(s == null ? '' : s)
@@ -78,6 +79,7 @@ exports.handler = async (event) => {
 
   try {
     const sb = getSupabase();
+    const isolatedSandbox = isIsolatedSandbox();
     const { data: u, error: e1 } = await sb
       .from('users')
       .select('id, lead_id, email, nombre, apellidos, dni_numero, direccion, dni_completed, tipo, origin, application_level, has_eu_id, num_carreras, contract_data')
@@ -95,11 +97,13 @@ exports.handler = async (event) => {
     const signatureMime = (/^data:([^;,]+)/.exec(String(signature_content)) || [])[1] || 'image/png';
     const existingPricingVersion = contractPricingVersion(u.contract_data);
     const pricingVersion = existingPricingVersion || (tipo === 'delft' ? DELFT_PRICE_VERSION : null);
-    const uploadedSignature = await storage.uploadDataUrl(sb, signature_content, {
-      keyPrefix: `${u.id}/contracts`,
-      filename: `signature-${nowIso.slice(0, 10)}.png`,
-      contentType: signatureMime,
-    });
+    const uploadedSignature = isolatedSandbox
+      ? { path: null }
+      : await storage.uploadDataUrl(sb, signature_content, {
+          keyPrefix: `${u.id}/contracts`,
+          filename: `signature-${nowIso.slice(0, 10)}.png`,
+          contentType: signatureMime,
+        });
 
     const contract_data = {
       version_template: 'contratos-2027-revision-integrada',
@@ -135,12 +139,12 @@ exports.handler = async (event) => {
       throw e2;
     }
     const previousSignaturePath = u.contract_data && u.contract_data.signature_path;
-    if (previousSignaturePath && previousSignaturePath !== uploadedSignature.path) {
+    if (previousSignaturePath && previousSignaturePath !== uploadedSignature.path && !isolatedSandbox) {
       await storage.removeObject(sb, previousSignaturePath);
     }
 
     // Best-effort: generar PDF y enviar por email — no bloquea la respuesta.
-    try {
+    if (!isolatedSandbox) try {
       const pdfBuffer = await buildContractPdf({
         tipo,
         esOtros,
