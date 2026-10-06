@@ -642,7 +642,7 @@ function SignaturePad({ onChange }) {
 }
 
 // =====================
-//  ONBOARDING — PAGO (Stripe)
+//  ONBOARDING — PAGO
 // =====================
 export function OnboardingPayment({ user, onLogout, onDone }) {
   const amount = Number(user.first_payment_amount);
@@ -650,13 +650,13 @@ export function OnboardingPayment({ user, onLogout, onDone }) {
   const [busy, setBusy]   = useState(false);
   const [error, setError] = useState("");
 
-  // Si volvemos de Stripe con session_id, el gate principal ya dispara la
+  // Si volvemos de la pasarela, el gate principal ya dispara la
   // verificación; aquí mostramos "confirmando" para evitar parpadeo.
   const [confirming, setConfirming] = useState(false);
   useEffect(() => {
     try {
-      const sid = new URLSearchParams(window.location.search).get("session_id");
-      if (sid) setConfirming(true);
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("session_id") || params.get("payment_attempt")) setConfirming(true);
     } catch (error) { reportClientError("optional_operation", error); }
   }, []);
 
@@ -669,7 +669,7 @@ export function OnboardingPayment({ user, onLogout, onDone }) {
     } catch (e) {
       if (e.data?.error === "contract_not_signed") setError("Antes debes firmar el contrato.");
       else if (e.data?.error === "already_paid") { await onDone(); return; }
-      else if (e.data?.error === "stripe_not_configured") setError("La pasarela de pago no está configurada todavía. Contacta con tu asesor.");
+      else if (["stripe_not_configured", "revolut_not_configured", "payment_provider_not_configured"].includes(e.data?.error)) setError("La pasarela de pago no está configurada todavía. Contacta con tu asesor.");
       else setError(e.message || "No se pudo iniciar el pago.");
       setBusy(false);
     }
@@ -694,7 +694,7 @@ export function OnboardingPayment({ user, onLogout, onDone }) {
           </div>
         ) : (
           <div className="rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-100 px-3 py-2 text-xs">
-            🔒 El pago se procesa de forma segura en <strong>Stripe</strong>. Project Robin no almacena los datos de tu tarjeta.
+            🔒 El pago se procesa en una <strong>pasarela segura</strong>. Project Robin no almacena los datos de tu tarjeta.
           </div>
         )}
 
@@ -715,11 +715,11 @@ export function OnboardingPayment({ user, onLogout, onDone }) {
         )}
 
         <Btn className="w-full" size="lg" variant="gold" onClick={pay} disabled={busy || confirming}>
-          {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Redirigiendo a pago seguro…</> : <>Continuar a Stripe{amountStr ? ` · ${amountStr} €` : ""} <ChevronRight className="h-4 w-4" /></>}
+          {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Redirigiendo a pago seguro…</> : <>Continuar al pago{amountStr ? ` · ${amountStr} €` : ""} <ChevronRight className="h-4 w-4" /></>}
         </Btn>
 
         <div className="text-[11px] text-slate-400 text-center">
-          Serás redirigido a la pasarela segura de Stripe. Al completar el pago quedará registrada la primera cuota; las siguientes las gestionará tu asesor.
+          Serás redirigido a la pasarela de pago segura. Al completar el pago quedará registrada la primera cuota; las siguientes las gestionará tu asesor.
         </div>
       </div>
     </OnboardingShell>

@@ -121,6 +121,10 @@ exports.handler = async (event) => {
       }
     } catch (_) { /* best-effort: no bloquea el guardado del perfil */ }
 
+    // Garantiza que el cliente aparece en la hoja al completar el onboarding.
+    // El upsert materializa el plan de pagos y evita filas duplicadas por PR.
+    await require('../../lib/integration-sync').syncGoogleSheets(sb, session.uid);
+
     return json({ ok: true });
   } catch (e) {
     console.error('profile error', e);

@@ -108,6 +108,11 @@ exports.handler = async (event) => {
       if (Object.keys(patch).length) {
         await sb.from('users').update(patch).eq('id', existing.id);
       }
+      if (primer_pago_pagado) {
+        const { data: paidUser } = await sb.from('users').select('*').eq('id', existing.id).single();
+        await require('../../lib/integration-sync').syncPaidOnboarding(sb, paidUser)
+          .catch((syncError) => console.error('[notion] paid onboarding sync error:', syncError && syncError.message));
+      }
       // Si el cliente existente aún no tiene carpeta en Drive, se la creamos.
       await ensureDriveFolder(sb, existing.id, log);
 
@@ -168,6 +173,11 @@ exports.handler = async (event) => {
       .select()
       .single();
     if (error) throw error;
+
+    if (primer_pago_pagado) {
+      await require('../../lib/integration-sync').syncPaidOnboarding(sb, inserted)
+        .catch((syncError) => console.error('[notion] paid onboarding sync error:', syncError && syncError.message));
+    }
 
     // Cliente nuevo -> crear su carpeta en Google Drive (best-effort, con log).
     await ensureDriveFolder(sb, inserted.id, log);

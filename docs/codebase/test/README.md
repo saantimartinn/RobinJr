@@ -31,6 +31,7 @@ Regresiones unitarias y de límites arquitectónicos ejecutadas por Node.js.
 | [`faq-knowledge.test.js`](../../../test/faq-knowledge.test.js) | Pruebas automatizadas de faq knowledge.test. | `../lib/faq-knowledge`<br>`../lib/faq-citations` | Al fijar o actualizar el comportamiento cubierto. |
 | [`financial-config.test.js`](../../../test/financial-config.test.js) | Pruebas automatizadas de financial config.test. | `../shared/financial-config.cjs`<br>`../shared/contract-content.cjs` | Al fijar o actualizar el comportamiento cubierto. |
 | [`frontend-domain.test.mjs`](../../../test/frontend-domain.test.mjs) | Pruebas automatizadas de frontend domain.test. | `../portal-source/src/api.js`<br>`../portal-source/src/application/documents/document-utils.js`<br>`../portal-source/src/session.js` | Al fijar o actualizar el comportamiento cubierto. |
+| [`google-sheets.test.js`](../../../test/google-sheets.test.js) | Pruebas automatizadas de google sheets.test. | `../lib/google-sheets` | Al fijar o actualizar el comportamiento cubierto. |
 | [`identity.test.js`](../../../test/identity.test.js) | Pruebas automatizadas de identity.test. | `../lib/identity` | Al fijar o actualizar el comportamiento cubierto. |
 | [`integration-sync.test.js`](../../../test/integration-sync.test.js) | Pruebas automatizadas de integration sync.test. | `../lib/integration-sync`<br>`../netlify/functions/integration-retry` | Al fijar o actualizar el comportamiento cubierto. |
 | [`observability.test.js`](../../../test/observability.test.js) | Pruebas automatizadas de observability.test. | `../lib/observability` | Al fijar o actualizar el comportamiento cubierto. |
@@ -39,6 +40,7 @@ Regresiones unitarias y de límites arquitectónicos ejecutadas por Node.js.
 | [`privacy.test.js`](../../../test/privacy.test.js) | Pruebas automatizadas de privacy.test. | `../lib/privacy` | Al fijar o actualizar el comportamiento cubierto. |
 | [`profile-avatar.test.js`](../../../test/profile-avatar.test.js) | Pruebas automatizadas de profile avatar.test. | `../netlify/functions/profile-avatar` | Al fijar o actualizar el comportamiento cubierto. |
 | [`rate-limit-config.test.mjs`](../../../test/rate-limit-config.test.mjs) | Pruebas automatizadas de rate limit config.test. | `../netlify/edge-functions/rate-limit-identity.mjs`<br>`../netlify/edge-functions/rate-limit-expensive.mjs` | Al fijar o actualizar el comportamiento cubierto. |
+| [`revolut.test.js`](../../../test/revolut.test.js) | Pruebas automatizadas de revolut.test. | `../lib/revolut` | Al fijar o actualizar el comportamiento cubierto. |
 | [`security-headers.test.js`](../../../test/security-headers.test.js) | Pruebas automatizadas de security headers.test. | `../lib/http` | Al fijar o actualizar el comportamiento cubierto. |
 | [`storage.test.js`](../../../test/storage.test.js) | Pruebas automatizadas de storage.test. | `../lib/storage` | Al fijar o actualizar el comportamiento cubierto. |
 | [`stripe.test.js`](../../../test/stripe.test.js) | Pruebas automatizadas de stripe.test. | `../lib/stripe` | Al fijar o actualizar el comportamiento cubierto. |

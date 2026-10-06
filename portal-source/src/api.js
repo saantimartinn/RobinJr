@@ -213,7 +213,7 @@ export async function contractSave(payload) {
   return api.post("/api/onboarding/contract", payload);
 }
 
-// Stripe Checkout para la primera cuota del onboarding. Devuelve { url }.
+// Checkout alojado para la primera cuota del onboarding. Devuelve { url }.
 export async function onboardingCheckout() {
   return api.post("/api/onboarding/checkout", {});
 }
@@ -222,13 +222,15 @@ export async function onboardingCheckout() {
 export async function paymentsList() {
   return api.get("/api/payments");
 }
-// Stripe Checkout para una cuota desbloqueada (2-3 o extra). Devuelve { url }.
+// Checkout alojado para una cuota desbloqueada (2-3 o extra). Devuelve { url }.
 export async function paymentsCheckout(installment) {
   return api.post("/api/payments/checkout", { installment });
 }
-// Confirma el pago al volver de Stripe (idempotente).
-export async function paymentsVerify(sessionId) {
-  return api.post("/api/payments/verify", { session_id: sessionId });
+// Confirma el pago al volver de la pasarela (idempotente).
+export async function paymentsVerify({ sessionId, attemptId }) {
+  return api.post("/api/payments/verify", attemptId
+    ? { attempt_id: attemptId }
+    : { session_id: sessionId });
 }
 export async function adminPaymentsList(userId) {
   return api.get("/api/admin/payments?user_id=" + encodeURIComponent(userId));

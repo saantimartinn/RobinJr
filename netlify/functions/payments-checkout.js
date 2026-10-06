@@ -1,20 +1,27 @@
 /**
  * POST /api/payments/checkout  Body: { installment }
- * Crea una Stripe Checkout Session para una cuota desbloqueada (2-3 o extra >=4).
- * Devuelve { url }. Confirmación vía stripe-webhook / payments-verify.
+ * Crea un checkout alojado para una cuota desbloqueada (2-3 o extra >=4).
+ * Devuelve { url }. Confirmación vía webhook del proveedor / payments-verify.
  */
 const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
 const { ensurePayments } = require('../../lib/payments');
 const stripeLib = require('../../lib/stripe');
+const revolut = require('../../lib/revolut');
+const paymentProvider = require('../../lib/payment-provider');
+const attempts = require('../../lib/payment-attempts');
+const { toMinorUnits } = require('../../lib/payment-fulfill');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return methodNotAllowed(['POST']);
   if (!verifyOrigin(event)) return json({ error: 'bad_origin' }, { statusCode: 403 });
   const session = readSessionFromEvent(event);
   if (!session) return json({ error: 'unauthorized' }, { statusCode: 401 });
-  if (!stripeLib.isConfigured()) return json({ error: 'stripe_not_configured' }, { statusCode: 503 });
+  const provider = paymentProvider.name();
+  if (!paymentProvider.isConfigured()) {
+    return json({ error: 'payment_provider_not_configured', provider }, { statusCode: 503 });
+  }
 
   const body = parseJsonBody(event);
   if (!body) return json({ error: 'invalid_json' }, { statusCode: 400 });
@@ -44,18 +51,47 @@ exports.handler = async (event) => {
     if (p.status === 'paid') return json({ error: 'already_paid' }, { statusCode: 409 });
     if (p.status !== 'unlocked') return json({ error: 'not_unlocked' }, { statusCode: 409 });
 
+    const label = p.concept ? String(p.concept) : 'Cuota ' + p.installment;
+    const currency = String(p.currency || 'EUR').toUpperCase();
+    const amountMinor = toMinorUnits(p.amount);
+
+    if (provider === 'revolut') {
+      const attempt = await attempts.createAttempt(sb, {
+        userId: u.id,
+        paymentId: p.id,
+        kind: 'installment',
+        provider,
+        amountMinor,
+        currency,
+      });
+      try {
+        const order = await revolut.createOrder({
+          amountMinor,
+          currency,
+          description: ('Project Robin · ' + label).slice(0, 240),
+          email: u.email,
+          attemptId: attempt.id,
+          kind: 'installment',
+          redirectUrl: `${revolut.getBaseUrl(event)}/portal/?payment_attempt=${attempt.id}`,
+        });
+        await attempts.attachProviderOrder(sb, attempt.id, order);
+        return json({ url: order.checkout_url, id: order.id, attempt_id: attempt.id, provider });
+      } catch (error) {
+        try { await attempts.markAttempt(sb, attempt.id, 'failed'); } catch (_) { /* best effort */ }
+        throw error;
+      }
+    }
+
     const stripe = stripeLib.getStripe();
     const base = stripeLib.getBaseUrl(event);
-    const label = p.concept ? String(p.concept) : 'Cuota ' + p.installment;
-
     const cs = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
       line_items: [{
         quantity: 1,
         price_data: {
-          currency: (p.currency || 'EUR').toLowerCase(),
-          unit_amount: stripeLib.toCents(p.amount),
+          currency: currency.toLowerCase(),
+          unit_amount: amountMinor,
           product_data: { name: ('Project Robin · ' + label).slice(0, 240) },
         },
       }],
@@ -71,7 +107,7 @@ exports.handler = async (event) => {
       },
     });
 
-    return json({ url: cs.url, id: cs.id });
+    return json({ url: cs.url, id: cs.id, provider });
   } catch (e) {
     console.error('payments-checkout error', e);
     return serverError(e);

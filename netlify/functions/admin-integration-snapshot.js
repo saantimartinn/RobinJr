@@ -7,6 +7,8 @@ const { readSessionFromEvent } = require('../../lib/auth');
 const { isApplicationAdmin, normalizeEmail } = require('../../lib/authorization');
 const { json, methodNotAllowed, serverError } = require('../../lib/http');
 const stripe = require('../../lib/stripe');
+const revolut = require('../../lib/revolut');
+const paymentProvider = require('../../lib/payment-provider');
 const holded = require('../../lib/holded');
 
 exports.handler = async (event) => {
@@ -45,7 +47,9 @@ exports.handler = async (event) => {
       clients: clientRows,
       payments,
       connections: {
+        payment_provider: paymentProvider.name(),
         stripe: stripe.isConfigured(),
+        revolut: revolut.isConfigured(),
         holded: holded.isConfigured(),
         email: Boolean(process.env.RESEND_API_KEY),
       },

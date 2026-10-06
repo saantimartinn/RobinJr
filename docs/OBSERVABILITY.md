@@ -26,7 +26,7 @@ provider codes or safe machine-style messages are normalized into `error_code`.
 ## Covered operations
 
 - `auth.login`
-- `payments.verify` and `webhook.stripe`
+- `payments.verify`, `webhook.stripe` and `webhook.revolut`
 - `onboarding.checkout`
 - `bookings.create`
 - `webhook.notion` and `webhook.meet`
@@ -40,7 +40,7 @@ Netlify log drain/observability provider, configure alerts for:
 
 - any `level=error` in `auth.login`, payments, onboarding or bookings;
 - `result=retry_failed` or repeated `result=retry_pending`;
-- `result=degraded` for Stripe, Google Calendar or webhook secret configuration;
+- `result=degraded` for the payment provider, Google Calendar or webhook secret configuration;
 - a sustained rise in `result=rejected` for authentication or webhook operations.
 
 Use `request_id` to reconstruct the operation and `entity_id` only to locate the

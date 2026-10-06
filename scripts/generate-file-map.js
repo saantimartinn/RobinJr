@@ -74,6 +74,7 @@ function integrations(source, file) {
   const checks = [
     ['Supabase', /supabase|SUPABASE_/i],
     ['Stripe', /stripe/i],
+    ['Revolut', /revolut/i],
     ['Anthropic', /anthropic/i],
     ['Google Calendar/Meet', /google-calendar|calendar\.events|MEET_/i],
     ['Google Drive', /google-drive|drive\.files|DRIVE_/i],

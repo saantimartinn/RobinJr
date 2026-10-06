@@ -52,7 +52,7 @@ del cliente de servidor se encuentra en cada Function. Véanse
   No se usa Supabase Auth como identidad de aplicación.
 - **Aplicación**: onboarding, expediente, carreras, documentos, pagos, reservas y chat.
 - **Administración**: vistas y acciones para advisors y admins de aplicación.
-- **Integraciones**: Stripe, Google, Holded, Resend, Anthropic y webhooks autenticados.
+- **Integraciones**: Stripe/Revolut, Google, Holded, Resend, Anthropic y webhooks autenticados.
 
 Los entrypoints conservan los detalles HTTP y delegan lógica reutilizable a `lib/`.
 [API_INVENTORY.md](API_INVENTORY.md) enumera todas las Functions y

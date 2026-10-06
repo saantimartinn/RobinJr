@@ -262,6 +262,10 @@
   from = "/api/stripe/webhook"
   to = "/.netlify/functions/stripe-webhook"
   status = 200
+[[redirects]]
+  from = "/api/revolut/webhook"
+  to = "/.netlify/functions/revolut-webhook"
+  status = 200
 
 # ---------- Chat con IA (portal de aplicación) ----------
 [[redirects]]

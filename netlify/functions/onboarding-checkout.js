@@ -1,23 +1,28 @@
 /**
  * POST /api/onboarding/checkout
- * Crea una Stripe Checkout Session para la PRIMERA cuota del onboarding.
+ * Crea un checkout alojado para la PRIMERA cuota del onboarding.
  * Devuelve { url } al que el frontend redirige. El pago se confirma vía
- * stripe-webhook (autoritativo) y/o payments-verify (al volver).
+ * el webhook del proveedor (autoritativo) y/o payments-verify (al volver).
  */
 const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, serverError, verifyOrigin } = require('../../lib/http');
 const stripeLib = require('../../lib/stripe');
+const revolut = require('../../lib/revolut');
+const paymentProvider = require('../../lib/payment-provider');
+const attempts = require('../../lib/payment-attempts');
+const { toMinorUnits } = require('../../lib/payment-fulfill');
 const { applicationPlanForUser } = require('../../shared/financial-config.cjs');
 const { createOperationLogger } = require('../../lib/observability');
 
 exports.handler = async (event) => {
   const session = readSessionFromEvent(event);
+  const provider = paymentProvider.name();
   const log = createOperationLogger(event, {
     operation: 'onboarding.checkout',
     actor_id: session && session.uid,
     actor_role: session && session.role,
-    integration: 'stripe',
+    integration: provider,
   });
   log.start();
   if (event.httpMethod !== 'POST') {
@@ -32,9 +37,9 @@ exports.handler = async (event) => {
     log.warn('rejected', { error_code: 'unauthorized' });
     return json({ error: 'unauthorized' }, { statusCode: 401 });
   }
-  if (!stripeLib.isConfigured()) {
-    log.warn('degraded', { error_code: 'stripe_not_configured' });
-    return json({ error: 'stripe_not_configured' }, { statusCode: 503 });
+  if (!paymentProvider.isConfigured()) {
+    log.warn('degraded', { error_code: 'payment_provider_not_configured' });
+    return json({ error: 'payment_provider_not_configured', provider }, { statusCode: 503 });
   }
 
   try {
@@ -59,10 +64,38 @@ exports.handler = async (event) => {
 
     const first = applicationPlanForUser(u)[0];
     const amount = first.amount;
+    const amountMinor = toMinorUnits(amount);
+    const nombre = [u.nombre, u.apellidos].filter(Boolean).join(' ') || (u.email || '');
+
+    if (provider === 'revolut') {
+      const attempt = await attempts.createAttempt(sb, {
+        userId: u.id,
+        kind: 'onboarding',
+        provider,
+        amountMinor,
+        currency: 'EUR',
+      });
+      try {
+        const order = await revolut.createOrder({
+          amountMinor,
+          currency: 'EUR',
+          description: ('Project Robin · Primera cuota' + (nombre ? ' · ' + nombre : '')).slice(0, 240),
+          email: u.email,
+          attemptId: attempt.id,
+          kind: 'onboarding',
+          redirectUrl: `${revolut.getBaseUrl(event)}/portal/?payment_attempt=${attempt.id}`,
+        });
+        await attempts.attachProviderOrder(sb, attempt.id, order);
+        log.success({ entity_type: 'revolut_order', entity_id: order.id });
+        return json({ url: order.checkout_url, id: order.id, attempt_id: attempt.id, provider });
+      } catch (error) {
+        try { await attempts.markAttempt(sb, attempt.id, 'failed'); } catch (_) { /* best effort */ }
+        throw error;
+      }
+    }
 
     const stripe = stripeLib.getStripe();
     const base = stripeLib.getBaseUrl(event);
-    const nombre = [u.nombre, u.apellidos].filter(Boolean).join(' ') || (u.email || '');
 
     const cs = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -71,7 +104,7 @@ exports.handler = async (event) => {
         quantity: 1,
         price_data: {
           currency: 'eur',
-          unit_amount: stripeLib.toCents(amount),
+          unit_amount: amountMinor,
           product_data: {
             name: 'Project Robin · Primera cuota',
             description: ('Pago inicial del programa' + (nombre ? ' · ' + nombre : '')).slice(0, 240),
@@ -86,7 +119,7 @@ exports.handler = async (event) => {
     });
 
     log.success({ entity_type: 'checkout_session', entity_id: cs.id });
-    return json({ url: cs.url, id: cs.id });
+    return json({ url: cs.url, id: cs.id, provider });
   } catch (e) {
     log.failure(e);
     return serverError(e);

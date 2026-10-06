@@ -8,9 +8,9 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 |---|---|---|---|---|---|---|---:|
 | nextOnboardingStep | app.jsx | app/auth | user | none | none | none | 26 |
 | PortalRobin | app.jsx | app/auth | none | authState, active, selectedPortal | apiLogin, apiLogout, apiMe, onboardingState, paymentsVerify | PortalSelector, LoginScreen, AdminPortal, OnboardingOrigin, OnboardingDNI, OnboardingContract, OnboardingPayment, OnboardingProfile, PortalShell | 36 |
-| AuthShell | app.jsx | app/auth | { children } | none | none | none | 149 |
-| PortalSelector | app.jsx | app/auth | { onSelectPortal } | none | none | AuthShell, Icon | 190 |
-| LoginScreen | app.jsx | app/auth | { onLogin, onBack } | email, password, error, loading | none | AuthShell, Field, Btn | 230 |
+| AuthShell | app.jsx | app/auth | { children } | none | none | none | 150 |
+| PortalSelector | app.jsx | app/auth | { onSelectPortal } | none | none | AuthShell, Icon | 191 |
+| LoginScreen | app.jsx | app/auth | { onLogin, onBack } | email, password, error, loading | none | AuthShell, Field, Btn | 231 |
 | useDebounced | application/AdminPortal.jsx | application/admin | value, delay = 250 | v | none | none | 49 |
 | normalizeAdminClient | application/AdminPortal.jsx | application/admin | apiClient, adminId | none | none | none | 56 |
 | AdminDashboard | application/AdminPortal.jsx | application/admin | { user, onOpenClient, onOpenAssign, onGotoTab } | loading, error, data, alertSort, taskTitle, taskBusy, refreshKey | adminDashboard, adminTaskCreate, adminTaskToggle, adminTaskDelete | Card, CardContent, Btn, KpiCard, CardHeader, Badge, Row, Divider | 74 |
@@ -87,15 +87,15 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 
 | Module | Bytes | Responsibility |
 |---|---:|---|
-| app.jsx | 11542 | composition root and authentication screens |
+| app.jsx | 11624 | composition root and authentication screens |
 | application/AdminPortal.jsx | 115405 | advisor portal and application administration |
 | application/AdminWorkspace.jsx | 7418 | focused frontend component module |
 | application/ApplicationPortals.jsx | 53201 | application client portal composition |
 | application/careers/CareerRequirementsTimeline.jsx | 3283 | focused frontend component module |
-| application/ClientSections.jsx | 13438 | client payments, careers and documents |
+| application/ClientSections.jsx | 13499 | client payments, careers and documents |
 | application/documents/document-utils.js | 2918 | document phases, defaults and status mapping |
 | application/Faqs.jsx | 6392 | focused frontend component module |
-| application/onboarding/OnboardingFlow.jsx | 51366 | application onboarding flow |
+| application/onboarding/OnboardingFlow.jsx | 51449 | application onboarding flow |
 | application/payments/InvoiceReceipt.jsx | 4666 | printable payment receipt |
 | application/payments/payment-utils.jsx | 837 | payment formatting and status UI |
 | client-utils.js | 1873 | browser-safe formatting, logging and image helpers |
