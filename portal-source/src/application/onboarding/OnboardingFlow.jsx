@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import logoRBlanco from "../../assets/logo-r-blanco.png";
 import contractContent from "../../../../shared/contract-content.cjs";
+import academicSystemsConfig from "../../../../shared/academic-systems.cjs";
 import { fileToDataURL } from "../../browser-utils.js";
 import { Q_AREAS, Q_GENERAL, Q_MASTER_BLOCKS, Q_VOCACIONAL } from "../../questionnaire-data.js";
 import { CREAM, GOLD, NAVY, NAVY_DARK } from "../../theme.js";
@@ -31,6 +32,7 @@ import {
 } from "../../api.js";
 
 const { contractVariant: selectContractVariant } = contractContent;
+const { ACADEMIC_SYSTEMS, MAX_ACADEMIC_SUBJECTS, academicSystemByValue } = academicSystemsConfig;
 
 export function OnboardingOrigin({ user, onLogout, onDone }) {
   const [origin, setOrigin] = useState(user.origin || "");
@@ -831,6 +833,15 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
   const [email, setEmail] = useState(user.email || "");
   const [intereses, setIntereses] = useState(user.intereses || []);
   const [answers, setAnswers] = useState(initQuestionnaireAnswers);
+  const [academicSystem, setAcademicSystem] = useState(user.academic_system || "");
+  const [academicSubjects, setAcademicSubjects] = useState(() => {
+    const existing = Array.isArray(user.academic_subjects)
+      ? user.academic_subjects.map((subject) => ({ name: subject.name || "", level: subject.level || "" }))
+      : [];
+    if (existing.length) return existing;
+    const system = academicSystemByValue(user.academic_system);
+    return system ? Array.from({ length: system.subjectCount }, () => ({ name: "", level: "" })) : [];
+  });
   const [screen, setScreen] = useState(0); // 0 = correo + intereses
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -852,7 +863,9 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
       : [Q_GENERAL, ...intereses.map((i) => Q_AREAS[i]).filter(Boolean), Q_VOCACIONAL],
     [intereses, esMaestria]
   );
-  const totalScreens = 1 + blocks.length;
+  const academicScreen = blocks.length + 1;
+  const totalScreens = academicScreen + 1;
+  const selectedAcademicSystem = academicSystemByValue(academicSystem);
 
   function toggle(v) {
     setIntereses((arr) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]));
@@ -860,10 +873,46 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
   }
   function setAns(id, val) { setAnswers((a) => ({ ...a, [id]: val })); setError(""); }
 
+  function selectAcademicSystem(value) {
+    const system = academicSystemByValue(value);
+    setAcademicSystem(value);
+    setAcademicSubjects(system
+      ? Array.from({ length: system.subjectCount }, () => ({ name: "", level: "" }))
+      : []);
+    setError("");
+  }
+
+  function updateAcademicSubject(index, field, value) {
+    setAcademicSubjects((subjects) => subjects.map((subject, subjectIndex) => (
+      subjectIndex === index ? { ...subject, [field]: value } : subject
+    )));
+    setError("");
+  }
+
+  function addAcademicSubject() {
+    setAcademicSubjects((subjects) => subjects.length >= MAX_ACADEMIC_SUBJECTS
+      ? subjects
+      : [...subjects, { name: "", level: "" }]);
+  }
+
+  function removeAcademicSubject(index) {
+    setAcademicSubjects((subjects) => subjects.filter((_, subjectIndex) => subjectIndex !== index));
+    setError("");
+  }
+
   function validateScreen(idx) {
     if (idx === 0) {
       if (!email.trim()) return "Falta el correo electrónico.";
       if (intereses.length === 0) return "Selecciona al menos un área de interés.";
+      return "";
+    }
+    if (idx === academicScreen) {
+      if (!selectedAcademicSystem) return "Selecciona tu sistema académico.";
+      const completedSubjects = academicSubjects.filter((subject) => subject.name.trim());
+      if (!completedSubjects.length) return "Añade al menos una asignatura.";
+      if (selectedAcademicSystem.levels.length && completedSubjects.some((subject) => !subject.level)) {
+        return "Selecciona el nivel de cada asignatura que hayas añadido.";
+      }
       return "";
     }
     const blk = blocks[idx - 1];
@@ -917,12 +966,19 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
   async function submit() {
     setBusy(true); setError("");
     try {
-      await profileSave({ email: email.trim(), intereses, questionnaire: buildQuestionnaire() });
+      await profileSave({
+        email: email.trim(),
+        intereses,
+        questionnaire: buildQuestionnaire(),
+        academic_system: academicSystem,
+        academic_subjects: academicSubjects.filter((subject) => subject.name.trim()),
+      });
       await onDone();
     } catch (e) {
       if (e.status === 409) setError("Ese correo ya está en uso por otra cuenta.");
       else if (e.data?.error === "invalid_email") setError("El correo no es válido.");
       else if (e.data?.error === "missing_questionnaire") setError("Faltan respuestas del cuestionario.");
+      else if (e.data?.error === "invalid_academic_profile") setError("Revisa el sistema académico, las asignaturas y sus niveles.");
       else setError(e.message || "No hemos podido guardar.");
       setBusy(false);
     }
@@ -945,10 +1001,12 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  const curBlock = screen > 0 ? blocks[screen - 1] : null;
+  const curBlock = screen > 0 && screen < academicScreen ? blocks[screen - 1] : null;
   const subtitle = screen === 0
     ? "Tu correo será tu usuario para entrar al portal."
-    : "Cuestionario de orientación · sección " + screen + " de " + (totalScreens - 1);
+    : screen === academicScreen
+      ? "Última sección · sistema y asignaturas"
+      : "Cuestionario de orientación · sección " + screen + " de " + blocks.length;
   const isLast = screen === totalScreens - 1;
 
   return (
@@ -988,7 +1046,7 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
           </>
         )}
 
-        {screen > 0 && curBlock && (
+        {screen > 0 && screen < academicScreen && curBlock && (
           <>
             <div className="rounded-xl px-4 py-3" style={{ background: "#f1f4fb" }}>
               <div className="text-sm font-bold" style={{ color: NAVY, fontFamily: "'Georgia', serif" }}>{curBlock.title}</div>
@@ -1005,6 +1063,65 @@ export function OnboardingProfile({ user, onLogout, onDone }) {
                 <QuestionField key={q.id} def={q} value={answers[q.id]} onChange={(v) => setAns(q.id, v)} />
               ))}
             </div>
+          </>
+        )}
+
+        {screen === academicScreen && (
+          <>
+            <div className="rounded-xl px-4 py-3" style={{ background: "#f1f4fb" }}>
+              <div className="text-sm font-bold" style={{ color: NAVY, fontFamily: "'Georgia', serif" }}>Sistema y asignaturas</div>
+              <div className="text-xs text-slate-500 mt-0.5">
+                Selecciona el sistema que cursas y añade tus asignaturas actuales. Si el sistema utiliza niveles, podrás indicarlos en cada asignatura.
+              </div>
+            </div>
+
+            <label className="block">
+              <div className="text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">Sistema académico</div>
+              <select value={academicSystem} onChange={(event) => selectAcademicSystem(event.target.value)}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:bg-white transition">
+                <option value="">Selecciona tu sistema académico…</option>
+                {ACADEMIC_SYSTEMS.map((system) => <option key={system.value} value={system.value}>{system.label}</option>)}
+              </select>
+            </label>
+
+            {selectedAcademicSystem && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Asignaturas</div>
+                    <div className="text-xs text-slate-400 mt-1">Deja vacíos los huecos que no necesites.</div>
+                  </div>
+                  <Btn variant="secondary" size="sm" onClick={addAcademicSubject} disabled={academicSubjects.length >= MAX_ACADEMIC_SUBJECTS}>
+                    <Plus className="h-3.5 w-3.5" /> Añadir
+                  </Btn>
+                </div>
+
+                <div className="space-y-2.5">
+                  {academicSubjects.map((subject, index) => (
+                    <div key={index} className="flex flex-col sm:flex-row gap-2">
+                      <input type="text" value={subject.name}
+                        onChange={(event) => updateAcademicSubject(index, "name", event.target.value)}
+                        placeholder={`Asignatura ${index + 1}`} aria-label={`Asignatura ${index + 1}`}
+                        className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:bg-white transition" />
+                      {selectedAcademicSystem.levels.length > 0 && (
+                        <select value={subject.level}
+                          onChange={(event) => updateAcademicSubject(index, "level", event.target.value)}
+                          aria-label={`Nivel de la asignatura ${index + 1}`}
+                          disabled={!subject.name.trim()}
+                          className="min-w-0 sm:w-52 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:bg-white transition disabled:opacity-50">
+                          <option value="">Nivel…</option>
+                          {selectedAcademicSystem.levels.map((level) => <option key={level.value} value={level.value}>{level.label}</option>)}
+                        </select>
+                      )}
+                      <button type="button" onClick={() => removeAcademicSubject(index)} aria-label={`Eliminar asignatura ${index + 1}`}
+                        className="h-10 w-10 self-end sm:self-auto rounded-xl border border-slate-200 bg-white text-slate-400 hover:text-rose-600 hover:border-rose-200 grid place-items-center transition">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         )}
 

@@ -20,6 +20,8 @@ Contenido mantenido de `supabase/migrations/`.
 | [`202609080002_add_portal_faqs.sql`](../../../../supabase/migrations/202609080002_add_portal_faqs.sql) | Archivo mantenido del repositorio: 202609080002_add_portal_faqs.sql. | — | Cuando cambie la responsabilidad indicada. |
 | [`202609220001_add_student_phone.sql`](../../../../supabase/migrations/202609220001_add_student_phone.sql) | Archivo mantenido del repositorio: 202609220001_add_student_phone.sql. | — | Cuando cambie la responsabilidad indicada. |
 | [`202610060001_create_payment_attempts.sql`](../../../../supabase/migrations/202610060001_create_payment_attempts.sql) | Archivo mantenido del repositorio: 202610060001_create_payment_attempts.sql. | — | Cuando cambie la responsabilidad indicada. |
+| [`202610060002_add_academic_profile.sql`](../../../../supabase/migrations/202610060002_add_academic_profile.sql) | Archivo mantenido del repositorio: 202610060002_add_academic_profile.sql. | — | Cuando cambie la responsabilidad indicada. |
+| [`202610060003_create_birthday_notifications.sql`](../../../../supabase/migrations/202610060003_create_birthday_notifications.sql) | Archivo mantenido del repositorio: 202610060003_create_birthday_notifications.sql. | — | Cuando cambie la responsabilidad indicada. |
 
 ---
 

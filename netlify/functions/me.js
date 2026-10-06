@@ -46,6 +46,8 @@ exports.handler = async (event) => {
       apellidos: u.apellidos,
       telefono_alumno: u.telefono_alumno || u.questionnaire?.telefono_alumno || null,
       intereses: u.intereses || [],
+      academic_system: u.academic_system || null,
+      academic_subjects: Array.isArray(u.academic_subjects) ? u.academic_subjects : [],
       lived_abroad: !!u.lived_abroad,
       lived_abroad_country: u.lived_abroad_country || null,
       lived_abroad_other: u.lived_abroad_other || null,

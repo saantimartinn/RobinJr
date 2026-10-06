@@ -18,6 +18,7 @@ cliente de servidor y aplican sesión, rol y ownership en código. Los buckets `
 | `ai_chat_messages` | Conversaciones de alumno, IA y advisor | `user_id → users.id` | `chat-ai`, `admin-chat`, `chat-cleanup` |
 | `ai_chat_state` | Pausa/reanudación de IA por alumno | `user_id → users.id` | `chat-ai`, `admin-chat`, `chat-cleanup` |
 | `bookings` | Reservas Calendar/Meet | `user_id → users.id` | bookings, dashboard y transcripciones |
+| `birthday_events` | Deduplicación anual de felicitaciones y aviso al asesor | `user_id → users.id` | tarea programada de cumpleaños |
 | `career_templates` | Catálogo de carreras y requisitos | — | careers, documentos, asistentes y reservas |
 | `client_careers` | Asignación alumno–carrera | `user_id → users.id` | careers, asistentes y reservas |
 | `documents` | Requisitos y ficheros del alumno | `user_id → users.id` | endpoints de documentos, dashboard y asistentes |
@@ -31,7 +32,8 @@ cliente de servidor y aplican sesión, rol y ownership en código. Los buckets `
 
 ## Reglas relevantes
 
-- `users`: `lead_id` y `username` únicos; `application_phase` entre 1 y 9.
+- `users`: `lead_id` y `username` únicos; `application_phase` entre 1 y 9. El perfil académico se conserva en `academic_system` y `academic_subjects` (JSONB con nombre y nivel opcional por asignatura).
+- `birthday_events`: combinación `(user_id, birthday_year)` única; acceso exclusivo del backend mediante RLS sin políticas públicas.
 - `client_careers`: combinación `(user_id, career_template_id)` única.
 - `payments`: `installment >= 1` y combinación `(user_id, installment)` única.
 - `notification_recipients`: combinación `(notification_id, user_id)` única.

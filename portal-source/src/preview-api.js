@@ -8,10 +8,20 @@ const previewClient = {
   apellidos: "Martín",
   email: "lucia.preview@example.com",
   telefono_alumno: "+34 612 345 678",
+  fecha_nacimiento: "2008-10-06",
   application_phase: 4,
   days_in_phase: 6,
   requires_onboarding: false,
   intereses: ["business", "ciencias_sociales"],
+  academic_system: "ib",
+  academic_subjects: [
+    { name: "Matemáticas: Análisis y Enfoques", level: "hl" },
+    { name: "Economía", level: "hl" },
+    { name: "Inglés B", level: "hl" },
+    { name: "Español A: Lengua y Literatura", level: "sl" },
+    { name: "Biología", level: "sl" },
+    { name: "Francés B", level: "sl" },
+  ],
 };
 
 const previewClients = [
@@ -93,6 +103,22 @@ function previewUser(role) {
       num_carreras: 3,
     };
   }
+  if (params.get("onboarding") === "profile") {
+    return {
+      ...previewClient,
+      role: "client",
+      requires_onboarding: true,
+      origin: "espana",
+      application_level: "grado",
+      has_eu_id: true,
+      dni_completed: true,
+      contract_signed: true,
+      profile_completed: false,
+      pago_completed: false,
+      academic_system: null,
+      academic_subjects: [],
+    };
+  }
   return { ...previewClient, role: "client" };
 }
 
@@ -120,7 +146,18 @@ export async function getLocalPreviewResponse(method, url) {
     const { default: faqItems } = await import("../../shared/portal-faqs.json");
     return { active: true, data: { faqs: faqItems.map((faq, index) => ({ ...faq, id: `builtin-${index + 1}`, published: true, builtin: true })) } };
   }
-  if (path === "/api/notifications" || path === "/api/admin/notifications") return { active: true, data: { notifications: [] } };
+  if (path === "/api/notifications") {
+    const showBirthday = new URLSearchParams(window.location.search).get("birthday") === "1";
+    return { active: true, data: { notifications: showBirthday ? [{
+      id: "preview-birthday",
+      title: "¡Feliz cumpleaños, Lucía! 🎉",
+      content: "Todo el equipo de Project Robin te desea un día increíble. ¡Disfrútalo mucho!",
+      type: "info",
+      event_kind: "birthday",
+      created_at: new Date().toISOString(),
+    }] : [] } };
+  }
+  if (path === "/api/admin/notifications") return { active: true, data: { notifications: [] } };
   if (path === "/api/chat") {
     const { default: faqItems } = await import("../../shared/portal-faqs.json");
     const citation = faqItems[22];

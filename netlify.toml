@@ -319,3 +319,7 @@
 # ---------- Reintentos idempotentes de integraciones empresariales ----------
 [functions."integration-retry"]
   schedule = "*/10 * * * *"
+
+# ---------- Felicitaciones de cumpleaños y aviso al asesor ----------
+[functions."birthday-notifications"]
+  schedule = "0 6 * * *"

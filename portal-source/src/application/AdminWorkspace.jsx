@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { LayoutDashboard, Users, Bell, LogOut, Shield, Search, X, ArrowLeft, ArrowLeftRight, ChevronRight, User, BookOpen, FileText, CreditCard, Sparkles, Calendar, Compass, HelpCircle } from "lucide-react";
+import { LayoutDashboard, Users, Bell, LogOut, Shield, Search, X, ArrowLeft, ArrowLeftRight, ChevronRight, User, BookOpen, FileText, CreditCard, Sparkles, Calendar, Compass, HelpCircle, GraduationCap } from "lucide-react";
 import robinWordmark from "../assets/robin-wordmark.png";
 import { APP_STEPS } from "../application-steps.js";
 import "./admin-portal.css";
@@ -12,6 +12,7 @@ export const CLIENT_TABS = [
   { key: "pagos", label: "Pagos", icon: CreditCard },
   { key: "chat", label: "Chat del alumno", icon: Sparkles },
   { key: "reservas", label: "Llamadas", icon: Calendar },
+  { key: "academico", label: "Perfil académico", icon: GraduationCap },
 ];
 const GLOBAL_TABS = [
   { key: "inicio", label: "Resumen", icon: LayoutDashboard },

@@ -2,6 +2,7 @@ const { getSupabase } = require('../../lib/supabase');
 const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
 const { email: normalizeEmail } = require('../../lib/validation');
+const { sanitizeAcademicProfile } = require('../../shared/academic-systems.cjs');
 
 const VALID_INTERESTS = [
   'ciencias',
@@ -56,7 +57,7 @@ exports.handler = async (event) => {
   const body = parseJsonBody(event);
   if (!body) return json({ error: 'invalid_json' }, { statusCode: 400 });
 
-  const { intereses, questionnaire } = body;
+  const { intereses, questionnaire, academic_system, academic_subjects } = body;
   const email = normalizeEmail(body.email);
   if (!email) {
     return json({ error: 'invalid_email' }, { statusCode: 400 });
@@ -75,6 +76,10 @@ exports.handler = async (event) => {
   const cleanQuestionnaire = sanitizeQuestionnaire(questionnaire);
   if (!cleanQuestionnaire) {
     return json({ error: 'missing_questionnaire' }, { statusCode: 400 });
+  }
+  const academicProfile = sanitizeAcademicProfile(academic_system, academic_subjects);
+  if (!academicProfile) {
+    return json({ error: 'invalid_academic_profile' }, { statusCode: 400 });
   }
 
   try {
@@ -96,6 +101,8 @@ exports.handler = async (event) => {
       profile_completed: true,
       questionnaire: cleanQuestionnaire,
       questionnaire_completed_at: new Date().toISOString(),
+      academic_system: academicProfile.system,
+      academic_subjects: academicProfile.subjects,
       // se invalidan sugerencias previas: se regeneran cuando el admin abra el perfil
       career_suggestions: null,
       career_suggestions_at: null,

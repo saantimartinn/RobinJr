@@ -28,7 +28,7 @@ exports.handler = async (event) => {
 
     const { data: notifs, error: e2 } = await sb
       .from('notifications')
-      .select('id, title, content, type, created_at')
+      .select('id, title, content, type, event_kind, created_at')
       .in('id', ids)
       .order('created_at', { ascending: true });
     if (e2) return json({ notifications: [] });

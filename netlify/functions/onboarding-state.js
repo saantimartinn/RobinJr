@@ -48,6 +48,8 @@ exports.handler = async (event) => {
         email: u.email || '',
         intereses: u.intereses || [],
         questionnaire: u.questionnaire || null,
+        academic_system: u.academic_system || null,
+        academic_subjects: Array.isArray(u.academic_subjects) ? u.academic_subjects : [],
       },
     });
   } catch (e) {

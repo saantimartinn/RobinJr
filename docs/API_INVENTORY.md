@@ -1,6 +1,6 @@
 # API inventory
 
-Generated from `netlify.toml` and static analysis of 64 Netlify Functions.
+Generated from `netlify.toml` and static analysis of 65 Netlify Functions.
 Scheduled/internal Functions without a redirect are listed with their direct function path. This is an
 engineering inventory, not a substitute for runtime or legal review.
 
@@ -36,6 +36,7 @@ engineering inventory, not a substitute for runtime or legal review.
 | auth-change-password | POST | /api/auth/change-password | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_json, invalid_fields, weak_password, invalid_credentials | users | none |
 | auth-login | POST | /api/auth/login | Public | none | JSON body | origin, JSON, field checks | JSON | bad_origin, invalid_json, missing_fields, invalid_credentials, ambiguous_identity | none detected | none |
 | auth-logout | POST | /api/auth/logout | Public/internal | none | none | origin | JSON | bad_origin | none detected | none |
+| birthday-notifications | SCHEDULE | cron: 0 6 * * * | Netlify schedule | application admin | none | method/auth only | JSON | not_found, birthday_notifications_failed | birthday_events, notification_recipients, notifications, users, webhook_log | Google Calendar/Meet, Resend/email |
 | bookings-availability | GET | /api/bookings/availability | Session cookie | authenticated | query | method/auth only | JSON | unauthorized, user_not_found, no_admin_assigned | users | Google Calendar/Meet |
 | bookings-create | POST | /api/bookings/create | Session cookie | authenticated | JSON body | origin, JSON, field checks | JSON | bad_origin, unauthorized, invalid_start_at, invalid_duration, start_in_past, user_not_found | bookings, career_templates, client_careers, documents, payments, users, webhook_log | Google Calendar/Meet, Anthropic, Resend/email |
 | bookings-list | GET | /api/bookings | Session cookie | application admin | query | method/auth only | JSON | unauthorized | bookings, users | none |

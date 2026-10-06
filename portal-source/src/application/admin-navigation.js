@@ -1,4 +1,4 @@
-export const ADMIN_CLIENT_SECTIONS = ["estado", "perfil", "carreras", "documentos", "pagos", "chat", "reservas"];
+export const ADMIN_CLIENT_SECTIONS = ["estado", "perfil", "carreras", "documentos", "pagos", "chat", "reservas", "academico"];
 const GLOBAL_SECTIONS = ["inicio", "clientes", "notificaciones", "faqs"];
 export const INITIAL_ADMIN_NAVIGATION = { active: "inicio", selectedClientId: null };
 

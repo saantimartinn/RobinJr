@@ -12,7 +12,7 @@ Flujo guiado de incorporación del alumno.
 
 | Archivo | Qué hace | Relaciones clave | Modifícalo cuando |
 |---|---|---|---|
-| [`OnboardingFlow.jsx`](../../../../../../portal-source/src/application/onboarding/OnboardingFlow.jsx) | Flujo completo de pantallas y formularios de onboarding. | `../../assets/logo-r-blanco.png`<br>`../../../../shared/contract-content.cjs`<br>`../../browser-utils.js`<br>`../../questionnaire-data.js`<br>`../../theme.js`<br>`../../ui.jsx` | Al cambiar esa parte de la experiencia React. |
+| [`OnboardingFlow.jsx`](../../../../../../portal-source/src/application/onboarding/OnboardingFlow.jsx) | Flujo completo de pantallas y formularios de onboarding. | `../../assets/logo-r-blanco.png`<br>`../../../../shared/contract-content.cjs`<br>`../../../../shared/academic-systems.cjs`<br>`../../browser-utils.js`<br>`../../questionnaire-data.js`<br>`../../theme.js` | Al cambiar esa parte de la experiencia React. |
 
 ---
 

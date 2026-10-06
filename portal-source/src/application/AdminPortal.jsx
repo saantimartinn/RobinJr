@@ -19,6 +19,7 @@ import {
   Compass, MessagesSquare, Pencil, Bell, Lock,
 } from "lucide-react";
 import financialConfig from "../../../shared/financial-config.cjs";
+import academicSystemsConfig from "../../../shared/academic-systems.cjs";
 import { APP_STEPS } from "../application-steps.js";
 import { fileToDataURL, uid } from "../browser-utils.js";
 import { CREAM, GOLD, NAVY, NAVY_DARK } from "../theme.js";
@@ -43,6 +44,7 @@ import {
 } from "../api.js";
 
 const { APPLICATION_TOTALS, FISCAL: ROBIN_FISCAL } = financialConfig;
+const { academicSystemLabel, academicLevelLabel } = academicSystemsConfig;
 
 import { AdminChatIA, LivedAbroadCard } from "./ApplicationPortals.jsx";
 
@@ -63,8 +65,26 @@ function normalizeAdminClient(apiClient, adminId) {
     dni_numero: apiClient.dni_numero || "",
     telefono_alumno: apiClient.telefono_alumno || "",
     intereses: apiClient.intereses || [],
+    academic_system: apiClient.academic_system || null,
+    academic_subjects: Array.isArray(apiClient.academic_subjects) ? apiClient.academic_subjects : [],
     assignedTo: apiClient.assigned_to || adminId,
   };
+}
+
+function formatBirthDate(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return "—";
+  const date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(date);
+}
+
+function birthdayIsToday(value) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""));
+  if (!match) return false;
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Madrid", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+  return match[2] === month && match[3] === day;
 }
 
 // =====================
@@ -877,6 +897,9 @@ export function AdminPortal({ user, onLogout }) {
             {active === "reservas" && selectedClient && (
               <AdminReservas client={selectedClient} />
             )}
+            {active === "academico" && selectedClient && (
+              <AdminPerfilAcademico client={selectedClient} />
+            )}
             {active === "pagos" && selectedClient && (
               <AdminPagos client={selectedClient} />
             )}
@@ -903,6 +926,63 @@ export function AdminPortal({ user, onLogout }) {
         />
       )}
     </AdminWorkspace>
+  );
+}
+
+// =====================
+//  ADMIN — PERFIL ACADÉMICO
+// =====================
+function AdminPerfilAcademico({ client }) {
+  const subjects = Array.isArray(client.academic_subjects) ? client.academic_subjects : [];
+  const systemLabel = academicSystemLabel(client.academic_system);
+
+  return (
+    <div className="space-y-5">
+      <Card>
+        <CardHeader title="Perfil académico" icon={GraduationCap}
+          subtitle="Sistema y asignaturas indicados por el alumno durante el onboarding" />
+        <CardContent>
+          {!client.academic_system ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-10 text-center">
+              <GraduationCap className="h-7 w-7 mx-auto text-slate-300" />
+              <div className="text-sm font-semibold text-slate-600 mt-3">Perfil académico pendiente</div>
+              <div className="text-xs text-slate-400 mt-1">El alumno todavía no ha indicado su sistema ni sus asignaturas.</div>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div>
+                <div className="text-xs font-medium text-slate-500 mb-1.5">Sistema académico</div>
+                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-800">
+                  {systemLabel}
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-2.5">
+                  <div className="text-xs font-medium text-slate-500">Asignaturas</div>
+                  <Badge tone="slate">{subjects.length} {subjects.length === 1 ? "asignatura" : "asignaturas"}</Badge>
+                </div>
+                {subjects.length === 0 ? (
+                  <div className="text-sm text-slate-400">No hay asignaturas registradas.</div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {subjects.map((subject, index) => (
+                      <div key={`${subject.name}-${index}`} className="rounded-xl border border-slate-200 bg-white px-4 py-3 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold text-slate-800 break-words">{subject.name}</div>
+                          {subject.level && <div className="text-xs text-slate-500 mt-1">{academicLevelLabel(client.academic_system, subject.level)}</div>}
+                        </div>
+                        <span className="h-8 w-8 rounded-lg bg-slate-100 text-slate-500 grid place-items-center text-xs font-bold flex-shrink-0">{index + 1}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
@@ -1369,6 +1449,20 @@ function AdminPerfil({ client, onRefresh }) {
 
   return (
     <div className="space-y-5">
+      <Card>
+        <CardHeader title="Cumpleaños" icon={PartyPopper}
+          subtitle="Fecha recuperada del DNI durante el onboarding" />
+        <CardContent>
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <div>
+              <div className="text-xs text-slate-500">Fecha de nacimiento</div>
+              <div className="text-base font-semibold text-slate-800 mt-1 capitalize">{formatBirthDate(client.fecha_nacimiento)}</div>
+            </div>
+            {birthdayIsToday(client.fecha_nacimiento) && <Badge tone="gold">Cumple años hoy 🎉</Badge>}
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader title="Datos personales" subtitle="Solo lectura · datos persistidos en Supabase" icon={User} />
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">

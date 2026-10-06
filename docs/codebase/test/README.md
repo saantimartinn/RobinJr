@@ -12,12 +12,14 @@ Regresiones unitarias y de límites arquitectónicos ejecutadas por Node.js.
 
 | Archivo | Qué hace | Relaciones clave | Modifícalo cuando |
 |---|---|---|---|
+| [`academic-systems.test.cjs`](../../../test/academic-systems.test.cjs) | Pruebas automatizadas de academic systems.test. | `../shared/academic-systems.cjs` | Al fijar o actualizar el comportamiento cubierto. |
 | [`account-access-email.test.js`](../../../test/account-access-email.test.js) | Pruebas automatizadas de account access email.test. | `../lib/account-access-email` | Al fijar o actualizar el comportamiento cubierto. |
 | [`admin-navigation.test.mjs`](../../../test/admin-navigation.test.mjs) | Pruebas automatizadas de admin navigation.test. | `../portal-source/src/application/admin-navigation.js` | Al fijar o actualizar el comportamiento cubierto. |
 | [`admins.test.js`](../../../test/admins.test.js) | Pruebas automatizadas de admins.test. | `../lib/admins` | Al fijar o actualizar el comportamiento cubierto. |
 | [`auth-session.test.js`](../../../test/auth-session.test.js) | Pruebas automatizadas de auth session.test. | `../lib/auth` | Al fijar o actualizar el comportamiento cubierto. |
 | [`authorization.test.js`](../../../test/authorization.test.js) | Pruebas automatizadas de authorization.test. | `../lib/authorization` | Al fijar o actualizar el comportamiento cubierto. |
 | [`backend-boundaries.test.js`](../../../test/backend-boundaries.test.js) | Pruebas automatizadas de backend boundaries.test. | `../lib/admin-dashboard`<br>`../lib/career-suggestions`<br>`../lib/notion` | Al fijar o actualizar el comportamiento cubierto. |
+| [`birthday-notifications.test.js`](../../../test/birthday-notifications.test.js) | Pruebas automatizadas de birthday notifications.test. | `../netlify/functions/birthday-notifications` | Al fijar o actualizar el comportamiento cubierto. |
 | [`booking-availability.test.js`](../../../test/booking-availability.test.js) | Pruebas automatizadas de booking availability.test. | `../lib/booking-availability` | Al fijar o actualizar el comportamiento cubierto. |
 | [`booking-config.test.js`](../../../test/booking-config.test.js) | Pruebas automatizadas de booking config.test. | `../lib/booking-config` | Al fijar o actualizar el comportamiento cubierto. |
 | [`booking-persistence.test.js`](../../../test/booking-persistence.test.js) | Pruebas automatizadas de booking persistence.test. | `../netlify/functions/bookings-create` | Al fijar o actualizar el comportamiento cubierto. |
