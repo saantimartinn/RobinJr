@@ -54,6 +54,10 @@ export default {
       redirect: "manual",
     }));
 
+    const requestUrl = new URL(request.url);
+    const isAdminUiPath = requestUrl.pathname === "/admin" || requestUrl.pathname.startsWith("/admin/");
+    if (!isAdminUiPath) return response;
+
     const contentType = response.headers.get("content-type") || "";
     if (upstream.pathname.startsWith("/assets/") && contentType.includes("text/html")) {
       return new Response("Admin asset not found", {
@@ -61,7 +65,7 @@ export default {
         headers: { "Cache-Control": "no-store", "Content-Type": "text/plain; charset=utf-8" },
       });
     }
-    if (!contentType.includes("text/html") && !contentType.includes("text/css")) return response;
+    if (!contentType.includes("text/html") && !contentType.includes("text/css") && !contentType.includes("javascript")) return response;
 
     const body = await response.text();
     const rewritten = body
