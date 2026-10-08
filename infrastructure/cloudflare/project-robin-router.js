@@ -55,10 +55,18 @@ export default {
     }));
 
     const contentType = response.headers.get("content-type") || "";
+    if (upstream.pathname.startsWith("/assets/") && contentType.includes("text/html")) {
+      return new Response("Admin asset not found", {
+        status: 404,
+        headers: { "Cache-Control": "no-store", "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
     if (!contentType.includes("text/html") && !contentType.includes("text/css")) return response;
 
     const body = await response.text();
-    const rewritten = body.replaceAll("/assets/", "/admin/assets/");
+    const rewritten = body
+      .replaceAll("/assets/", "/admin/assets/")
+      .replace(/(\/admin\/assets\/[^"' )]+)(?=["')])/g, "$1?v=admin-20261008");
     const responseHeaders = new Headers(response.headers);
     responseHeaders.delete("content-length");
     responseHeaders.delete("content-encoding");
