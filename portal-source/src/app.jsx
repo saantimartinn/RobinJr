@@ -173,7 +173,16 @@ function AuthShell({ children }) {
             Project Robin te acompaña en cada paso del proceso de admisión a las mejores universidades.
           </div>
         </div>
-        <div className="relative text-white/30 text-xs">© Project Robin · Portal de Cliente</div>
+        <div className="relative text-white/30 text-xs">
+          © Project Robin · Portal de Cliente ·{" "}
+          <a
+            href="/admin"
+            className="transition-colors hover:text-white/70 focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/70"
+            aria-label="Acceso de administración"
+          >
+            /admin
+          </a>
+        </div>
       </div>
       <div className="flex-1 flex flex-col items-center justify-center px-7 py-12 bg-[radial-gradient(circle_at_75%_15%,#fff_0,transparent_34%)]">
         <div className="w-full max-w-md">
@@ -181,6 +190,16 @@ function AuthShell({ children }) {
             <img src={robinLogoTransparent} alt="Robin" className="h-20 w-24 rounded-2xl bg-[#29395f] p-2 object-contain" />
           </div>
           {children}
+          <div className="mt-8 text-center text-xs text-[#29395f]/40 lg:hidden">
+            © Project Robin · Portal de Cliente ·{" "}
+            <a
+              href="/admin"
+              className="transition-colors hover:text-[#29395f]/70 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#29395f]/70"
+              aria-label="Acceso de administración"
+            >
+              /admin
+            </a>
+          </div>
         </div>
       </div>
     </div>
