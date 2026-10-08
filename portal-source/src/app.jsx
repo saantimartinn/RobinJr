@@ -174,13 +174,11 @@ function AuthShell({ children }) {
           </div>
         </div>
         <div className="relative text-white/30 text-xs">
-          © Project Robin · Portal de Cliente ·{" "}
           <a
             href="/admin"
             className="transition-colors hover:text-white/70 focus-visible:outline focus-visible:outline-1 focus-visible:outline-white/70"
-            aria-label="Acceso de administración"
           >
-            /admin
+            © Project Robin · Portal de Cliente
           </a>
         </div>
       </div>
@@ -191,13 +189,11 @@ function AuthShell({ children }) {
           </div>
           {children}
           <div className="mt-8 text-center text-xs text-[#29395f]/40 lg:hidden">
-            © Project Robin · Portal de Cliente ·{" "}
             <a
               href="/admin"
               className="transition-colors hover:text-[#29395f]/70 focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#29395f]/70"
-              aria-label="Acceso de administración"
             >
-              /admin
+              © Project Robin · Portal de Cliente
             </a>
           </div>
         </div>
