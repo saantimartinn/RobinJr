@@ -3,12 +3,13 @@ import financialConfig from "../../../../shared/financial-config.cjs";
 import { Btn } from "../../ui.jsx";
 import { eur } from "./payment-utils.jsx";
 
-const { FISCAL: ROBIN_FISCAL } = financialConfig;
+const { FISCAL: ROBIN_FISCAL, invoiceBreakdown } = financialConfig;
 
 export function Factura({ open, onClose, user, payment }) {
   if (!open || !payment) return null;
-  const base = Number(payment.amount || 0) / (1 + ROBIN_FISCAL.iva / 100);
-  const iva  = Number(payment.amount || 0) - base;
+  const storedTaxRate = payment.payment_data?.holded_tax_rate;
+  const breakdown = invoiceBreakdown(payment.amount, user, storedTaxRate);
+  const { base, tax: iva, taxRate } = breakdown;
   const fechaEmision = payment.paid_at ? new Date(payment.paid_at) : new Date();
   const fechaStr = new Intl.DateTimeFormat("es-ES", { day: "2-digit", month: "long", year: "numeric" }).format(fechaEmision);
 
@@ -45,7 +46,7 @@ export function Factura({ open, onClose, user, payment }) {
             <div className="grid grid-cols-[1fr_120px_120px] bg-slate-50 px-4 py-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wide">
               <div>Concepto</div>
               <div className="text-right">Base</div>
-              <div className="text-right">IVA ({ROBIN_FISCAL.iva}%)</div>
+              <div className="text-right">{taxRate === 0 ? "Sin IVA (0%)" : `IVA (${taxRate}%)`}</div>
             </div>
             <div className="grid grid-cols-[1fr_120px_120px] px-4 py-3 border-t border-slate-100">
               <div>

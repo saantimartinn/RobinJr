@@ -29,7 +29,7 @@ exports.handler = async (event) => {
 
     const { data: u } = await sb
       .from('users')
-      .select('id, email, nombre, apellidos, tipo, origin, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed, pago_completed_at, pago_data')
+      .select('id, email, nombre, apellidos, tipo, origin, pais, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed, pago_completed_at, pago_data')
       .eq('id', user_id)
       .single();
     if (!u) return json({ error: 'user_not_found' }, { statusCode: 404 });

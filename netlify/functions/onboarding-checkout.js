@@ -45,7 +45,7 @@ exports.handler = async (event) => {
     const sb = getSupabase();
     const { data: u, error: e1 } = await sb
       .from('users')
-      .select('id, lead_id, email, nombre, apellidos, tipo, origin, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed')
+      .select('id, lead_id, email, nombre, apellidos, tipo, origin, pais, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed')
       .eq('id', session.uid)
       .single();
     if (e1 || !u) {

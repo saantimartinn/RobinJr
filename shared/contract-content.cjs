@@ -201,7 +201,7 @@ const GENERAL_HISTORICAL = buildGeneralContract(
 
 const GENERAL_NOES = {
   key: 'general_noes',
-  title: 'Contrato de Términos y Condiciones de los Servicios de Consultoría Académica y Mentoría · Modalidad para alumnado sin documento de identidad europeo',
+  title: 'Contrato de Términos y Condiciones de los Servicios de Consultoría Académica y Mentoría · Modalidad internacional de 2.700 €',
   acceptanceFooter: GENERAL.acceptanceFooter,
   blocks: [
     { type: 'h2', text: 'Entre' }, INTRO_ADMISSIONS, ...DATOS_PARTES,
@@ -358,15 +358,15 @@ const MENTORIA = transitionContract({
 
 const VARIANTS = { general: GENERAL, general_noes: GENERAL_NOES, delft: DELFT, llegada: LLEGADA, mentoria: MENTORIA };
 
-function variantKey(tipo, esOtros) {
+function variantKey(tipo, usesInternational2700) {
   const t = String(tipo || 'general').toLowerCase();
-  if (t === 'general' && esOtros) return 'general_noes';
+  if (usesInternational2700) return 'general_noes';
   if (VARIANTS[t]) return t;
   return 'general';
 }
 
-function contractVariant(tipo, esOtros, pricingVersion) {
-  const key = variantKey(tipo, esOtros);
+function contractVariant(tipo, usesInternational2700, pricingVersion) {
+  const key = variantKey(tipo, usesInternational2700);
   if (key === 'general' && pricingVersion !== GENERAL_PRICE_VERSION) return GENERAL_HISTORICAL;
   return VARIANTS[key] || VARIANTS.general;
 }

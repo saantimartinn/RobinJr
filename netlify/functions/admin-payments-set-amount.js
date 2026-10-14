@@ -10,6 +10,7 @@ const { readSessionFromEvent } = require('../../lib/auth');
 const { isApplicationAdmin, normalizeEmail } = require('../../lib/authorization');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
 const { ensurePayments } = require('../../lib/payments');
+const { isLatamClient } = require('../../shared/financial-config.cjs');
 const { numberValue, stringValue } = require('../../lib/validation');
 
 exports.handler = async (event) => {
@@ -44,10 +45,13 @@ exports.handler = async (event) => {
 
     const { data: u } = await sb
       .from('users')
-      .select('id, tipo, origin, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed, pago_completed_at, pago_data')
+      .select('id, tipo, origin, pais, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed, pago_completed_at, pago_data')
       .eq('id', user_id)
       .single();
     if (!u) return json({ error: 'user_not_found' }, { statusCode: 404 });
+    if (isLatamClient(u)) {
+      return json({ error: 'latam_total_fixed', total: 2700 }, { statusCode: 409 });
+    }
 
     const rows = await ensurePayments(sb, u);
     const target = rows.find((r) => r.installment === installment);

@@ -27,7 +27,7 @@ exports.handler = async (event) => {
     if (e1) throw e1;
 
     const { data: u, error: eUser } = await sb.from('users')
-      .select('id, tipo, origin, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed, pago_completed_at, pago_data')
+      .select('id, tipo, origin, pais, num_carreras, has_eu_id, contract_signed, contract_data, pago_completed, pago_completed_at, pago_data')
       .eq('id', user_id).single();
     if (eUser || !u) return json({ error: 'user_not_found', detail: eUser && eUser.message }, { statusCode: 404 });
     const rows = await ensurePayments(sb, u);

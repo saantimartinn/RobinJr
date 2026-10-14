@@ -20,6 +20,116 @@ const FISCAL = Object.freeze({
   concepto: 'Asesoramiento para estudiar en el extranjero',
 });
 
+const EU_COUNTRIES = new Set([
+  'alemania', 'germany', 'de',
+  'austria', 'at',
+  'belgica', 'belgium', 'be',
+  'bulgaria', 'bg',
+  'chipre', 'cyprus', 'cy',
+  'croacia', 'croatia', 'hr',
+  'dinamarca', 'denmark', 'dk',
+  'eslovaquia', 'slovakia', 'sk',
+  'eslovenia', 'slovenia', 'si',
+  'espana', 'spain', 'es',
+  'estonia', 'ee',
+  'finlandia', 'finland', 'fi',
+  'francia', 'france', 'fr',
+  'grecia', 'greece', 'gr',
+  'hungria', 'hungary', 'hu',
+  'irlanda', 'ireland', 'ie',
+  'italia', 'italy', 'it',
+  'letonia', 'latvia', 'lv',
+  'lituania', 'lithuania', 'lt',
+  'luxemburgo', 'luxembourg', 'lu',
+  'malta', 'mt',
+  'paises bajos', 'holanda', 'netherlands', 'nl',
+  'polonia', 'poland', 'pl',
+  'portugal', 'pt',
+  'republica checa', 'chequia', 'czech republic', 'czechia', 'cz',
+  'rumania', 'romania', 'ro',
+  'suecia', 'sweden', 'se',
+]);
+
+// Países que Robin trata comercialmente como LATAM. Se incluyen nombres en
+// español/inglés y códigos ISO-2 para tolerar datos procedentes de formularios
+// y CRM distintos.
+const LATAM_COUNTRIES = new Set([
+  'argentina', 'ar',
+  'bolivia', 'bo',
+  'brasil', 'brazil', 'br',
+  'chile', 'cl',
+  'colombia', 'co',
+  'costa rica', 'cr',
+  'cuba', 'cu',
+  'ecuador', 'ec',
+  'el salvador', 'sv',
+  'guatemala', 'gt',
+  'haiti', 'ht',
+  'honduras', 'hn',
+  'mexico', 'mx',
+  'nicaragua', 'ni',
+  'panama', 'pa',
+  'paraguay', 'py',
+  'peru', 'pe',
+  'puerto rico', 'pr',
+  'republica dominicana', 'dominican republic', 'do',
+  'uruguay', 'uy',
+  'venezuela', 've',
+]);
+
+function normalizeLocation(value) {
+  return String(value == null ? '' : value)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+function isLatamClient(user) {
+  const source = user || {};
+  const labels = [source.origin, source.region, source.tipo, source.segment]
+    .map(normalizeLocation);
+  if (labels.some((label) => label === 'latin america' || label === 'latinoamerica' || /(^|\s)latam($|\s)/.test(label))) {
+    return true;
+  }
+  return LATAM_COUNTRIES.has(normalizeLocation(source.pais || source.country));
+}
+
+function usesInternational2700Plan(user) {
+  const source = user || {};
+  return isLatamClient(source)
+    || (normalizeLocation(source.origin) === 'otros' && source.has_eu_id !== true);
+}
+
+function isEuClient(user) {
+  const source = user || {};
+  if (isLatamClient(source)) return false;
+  const origin = normalizeLocation(source.origin);
+  if (origin !== 'otros' && origin !== 'international') return true;
+  return EU_COUNTRIES.has(normalizeLocation(source.pais || source.country));
+}
+
+function taxRateForClient(user) {
+  return isEuClient(user) ? FISCAL.iva : 0;
+}
+
+function invoiceBreakdown(amount, user, explicitTaxRate) {
+  const parsedRate = Number(explicitTaxRate);
+  const rate = isLatamClient(user)
+    ? 0
+    : explicitTaxRate !== null && explicitTaxRate !== undefined && Number.isFinite(parsedRate)
+      ? parsedRate
+      : taxRateForClient(user);
+  const gross = Math.round(Number(amount || 0) * 100) / 100;
+  const base = Math.round((gross / (1 + rate / 100)) * 100) / 100;
+  return {
+    gross,
+    base,
+    tax: Math.round((gross - base) * 100) / 100,
+    taxRate: rate,
+  };
+}
+
 function splitEqual(total, count) {
   const each = Math.round((Number(total) / count) * 100) / 100;
   const installments = [];
@@ -49,8 +159,9 @@ function generalPlan(totals, numCarreras, remainderToLast = false) {
   ];
 }
 
-function applicationPlan(tipo, numCarreras, origin, hasEuId) {
-  if (String(origin || '').toLowerCase() === 'otros' && hasEuId !== true) {
+function applicationPlan(tipo, numCarreras, origin, hasEuId, pais) {
+  const client = { tipo, origin, has_eu_id: hasEuId, pais };
+  if (usesInternational2700Plan(client)) {
     return splitEqual(APPLICATION_TOTALS.international, 3);
   }
   const key = String(tipo || 'general').toLowerCase();
@@ -95,7 +206,7 @@ function applicationPlanForUser(user) {
   const source = user || {};
   const key = String(source.tipo || 'general').toLowerCase();
   const pricingVersion = contractPricingVersion(source.contract_data);
-  const isInternational = String(source.origin || '').toLowerCase() === 'otros' && source.has_eu_id !== true;
+  const isInternational = usesInternational2700Plan(source);
   if (key === 'general' && !isInternational && pricingVersion !== GENERAL_PRICE_VERSION) {
     return generalPlan(HISTORICAL_GENERAL_TOTALS, source.num_carreras);
   }
@@ -106,7 +217,7 @@ function applicationPlanForUser(user) {
       { installment: 3, amount: 933 },
     ];
   }
-  return applicationPlan(source.tipo, source.num_carreras, source.origin, source.has_eu_id);
+  return applicationPlan(source.tipo, source.num_carreras, source.origin, source.has_eu_id, source.pais);
 }
 
 module.exports = {
@@ -116,9 +227,17 @@ module.exports = {
   GENERAL_PRICE_VERSION,
   HISTORICAL_GENERAL_TOTALS,
   FISCAL,
+  EU_COUNTRIES,
+  LATAM_COUNTRIES,
   applicationPlan,
   applicationPlanForUser,
   contractPricingVersion,
+  invoiceBreakdown,
+  isEuClient,
+  isLatamClient,
+  normalizeLocation,
   pricingVersionForNewUser,
   splitEqual,
+  taxRateForClient,
+  usesInternational2700Plan,
 };

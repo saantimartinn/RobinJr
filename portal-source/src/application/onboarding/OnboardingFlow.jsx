@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import logoRBlanco from "../../assets/logo-r-blanco.png";
 import contractContent from "../../../../shared/contract-content.cjs";
+import financialConfig from "../../../../shared/financial-config.cjs";
 import academicSystemsConfig from "../../../../shared/academic-systems.cjs";
 import { fileToDataURL } from "../../browser-utils.js";
 import { Q_AREAS, Q_GENERAL, Q_MASTER_BLOCKS, Q_VOCACIONAL } from "../../questionnaire-data.js";
@@ -32,6 +33,7 @@ import {
 } from "../../api.js";
 
 const { contractVariant: selectContractVariant } = contractContent;
+const { usesInternational2700Plan } = financialConfig;
 const { ACADEMIC_SYSTEMS, MAX_ACADEMIC_SUBJECTS, academicSystemByValue } = academicSystemsConfig;
 
 export function OnboardingOrigin({ user, onLogout, onDone }) {
@@ -393,15 +395,16 @@ export function OnboardingContract({ user, onLogout, onDone }) {
   const tipo = (user.tipo || "general").toLowerCase();
   const variant = CONTRACT_VARIANTS[tipo] || CONTRACT_VARIANTS.general;
   const esOtros = (user.origin || "") === "otros";
-  const esMaestria = esOtros && (user.application_level || "") === "maestria";
+  const contrato2700 = usesInternational2700Plan(user);
+  const esMaestria = contrato2700 && (user.application_level || "") === "maestria";
   const esPasaporte = esOtros && user.has_eu_id === false;
   const docLabel = esPasaporte ? "Pasaporte" : "DNI";
   const contractTitulo = esMaestria
     ? "Contrato — Consultoría académica (Máster)"
-    : esOtros
+    : contrato2700
       ? "Contrato — Consultoría académica (Internacional)"
       : variant.titulo;
-  const contractSubtitle = esOtros
+  const contractSubtitle = contrato2700
     ? (esMaestria
         ? "Internacional · admisión a programas de máster en Países Bajos"
         : "Internacional · aplicación a universidades en Países Bajos")
@@ -411,7 +414,7 @@ export function OnboardingContract({ user, onLogout, onDone }) {
   const alumnoDni = user.dni_numero || "—";
   const alumnoDireccion = user.direccion || "—";
 
-  const contractVariant = selectContractVariant(tipo, esOtros, user.pricing_version);
+  const contractVariant = selectContractVariant(tipo, contrato2700, user.pricing_version);
 
   const [nombreCliente, setNombreCliente] = useState("");
   const [dniCliente, setDniCliente] = useState("");

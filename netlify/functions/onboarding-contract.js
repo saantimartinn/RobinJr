@@ -13,7 +13,11 @@ const { readSessionFromEvent } = require('../../lib/auth');
 const { json, methodNotAllowed, parseJsonBody, serverError, verifyOrigin } = require('../../lib/http');
 const { sendEmail } = require('../../lib/email');
 const { buildContractPdf } = require('../../lib/contract-pdf');
-const { DELFT_PRICE_VERSION, contractPricingVersion } = require('../../shared/financial-config.cjs');
+const {
+  DELFT_PRICE_VERSION,
+  contractPricingVersion,
+  usesInternational2700Plan,
+} = require('../../shared/financial-config.cjs');
 const storage = require('../../lib/storage');
 const { variantKey } = require('../../shared/contract-content.cjs');
 const { isIsolatedSandbox } = require('../../lib/sandbox-mode');
@@ -82,7 +86,7 @@ exports.handler = async (event) => {
     const isolatedSandbox = isIsolatedSandbox();
     const { data: u, error: e1 } = await sb
       .from('users')
-      .select('id, lead_id, email, nombre, apellidos, dni_numero, direccion, dni_completed, tipo, origin, application_level, has_eu_id, num_carreras, contract_data')
+      .select('id, lead_id, email, nombre, apellidos, dni_numero, direccion, dni_completed, tipo, origin, pais, application_level, has_eu_id, num_carreras, contract_data')
       .eq('id', session.uid)
       .single();
     if (e1 || !u) return json({ error: 'unauthorized' }, { statusCode: 401 });
@@ -92,7 +96,8 @@ exports.handler = async (event) => {
     const fechaStr = fmtFecha(nowIso);
     const tipo = (u.tipo || 'general').toLowerCase();
     const esOtros = (u.origin || '') === 'otros';
-    const esMaestria = esOtros && (u.application_level || '') === 'maestria';
+    const contrato2700 = usesInternational2700Plan(u);
+    const esMaestria = contrato2700 && (u.application_level || '') === 'maestria';
     const esPasaporte = esOtros && u.has_eu_id === false;
     const signatureMime = (/^data:([^;,]+)/.exec(String(signature_content)) || [])[1] || 'image/png';
     const existingPricingVersion = contractPricingVersion(u.contract_data);
@@ -109,7 +114,7 @@ exports.handler = async (event) => {
       version_template: 'contratos-2027-revision-integrada',
       pricing_version: pricingVersion,
       tipo,
-      variant: variantKey(tipo, esOtros),
+      variant: variantKey(tipo, contrato2700),
       fecha_firma: nowIso,
       alumno: {
         nombre: u.nombre || null,
@@ -148,6 +153,7 @@ exports.handler = async (event) => {
       const pdfBuffer = await buildContractPdf({
         tipo,
         esOtros,
+        contrato2700,
         esMaestria,
         esPasaporte,
         alumno: contract_data.alumno,
@@ -161,7 +167,7 @@ exports.handler = async (event) => {
       const clienteNombre = contract_data.cliente.nombre || 'Cliente';
       const alumnoNombre = `${u.nombre || ''} ${u.apellidos || ''}`.trim() || '—';
       const leadId = u.lead_id || u.id || '';
-      const variant = variantKey(tipo, esOtros);
+      const variant = variantKey(tipo, contrato2700);
       const tipoTitulo = TITULO_POR_VARIANTE[variant] || TITULO_POR_VARIANTE.general;
       const subject = 'CONTRATO ROBIN "' + clienteNombre + ', ' + leadId + '"';
       const filename = 'Contrato Robin - ' + clienteNombre.replace(/[^a-zA-Z0-9 ._-]/g, '').slice(0, 80) + '.pdf';

@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const { PRIVACY_EMAIL, VARIANTS, contractVariant, variantKey, fill } = require('../shared/contract-content.cjs');
-const { GENERAL_PRICE_VERSION } = require('../shared/financial-config.cjs');
+const { GENERAL_PRICE_VERSION, usesInternational2700Plan } = require('../shared/financial-config.cjs');
 
 function contractText(key) {
   return VARIANTS[key].blocks
@@ -16,8 +16,25 @@ test('las cinco categorías contractuales 2027 están disponibles', () => {
   assert.equal(variantKey('general', false), 'general');
   assert.equal(variantKey('general', true), 'general_noes');
   assert.equal(variantKey('delft', false), 'delft');
+  assert.equal(variantKey('delft', true), 'general_noes');
   assert.equal(variantKey('llegada', false), 'llegada');
   assert.equal(variantKey('mentoria', false), 'mentoria');
+});
+
+test('el contrato de 2.700 € sigue exactamente la misma regla que las cuotas', () => {
+  const cases = [
+    [{ origin: 'otros', pais: 'México', has_eu_id: true }, true],
+    [{ origin: 'otros', pais: 'Brasil', has_eu_id: false }, true],
+    [{ origin: 'otros', pais: 'Alemania', has_eu_id: false }, true],
+    [{ origin: 'otros', pais: 'Alemania', has_eu_id: true }, false],
+    [{ origin: 'espana', pais: null, has_eu_id: null }, false],
+  ];
+
+  for (const [user, expected2700] of cases) {
+    const plan2700 = usesInternational2700Plan(user);
+    assert.equal(plan2700, expected2700);
+    assert.equal(variantKey('general', plan2700), expected2700 ? 'general_noes' : 'general');
+  }
 });
 
 test('todos los contratos usan el contacto de privacidad confirmado', () => {

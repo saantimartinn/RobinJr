@@ -7,8 +7,13 @@ const {
   GENERAL_PRICE_VERSION,
   applicationPlan,
   applicationPlanForUser,
+  invoiceBreakdown,
+  isLatamClient,
   pricingVersionForNewUser,
+  taxRateForClient,
 } = require('../shared/financial-config.cjs');
+const { latamPlanWithPaidAmounts } = require('../lib/payments');
+const { taxCodesFor, taxRateFor: holdedTaxRateFor } = require('../lib/holded');
 const { VARIANTS } = require('../shared/contract-content.cjs');
 
 test('cada plan de aplicación cuadra exactamente con su total canónico', () => {
@@ -20,6 +25,52 @@ test('cada plan de aplicación cuadra exactamente con su total canónico', () =>
   assert.equal(applicationPlan('llegada').reduce((s, r) => s + r.amount, 0), APPLICATION_TOTALS.llegada);
   assert.equal(applicationPlan('mentoria').reduce((s, r) => s + r.amount, 0), APPLICATION_TOTALS.mentoria);
   assert.equal(applicationPlan('general', 1, 'otros', false).reduce((s, r) => s + r.amount, 0), APPLICATION_TOTALS.international);
+});
+
+test('LATAM siempre suma 2.700 €, incluso con documento europeo o etiqueta directa', () => {
+  const clients = [
+    { origin: 'otros', pais: 'México', has_eu_id: true },
+    { origin: 'otros', pais: 'Colombia', has_eu_id: false },
+    { origin: 'latam', pais: null, has_eu_id: true },
+    { tipo: 'Pack LATAM', origin: 'espana', has_eu_id: true },
+  ];
+
+  for (const client of clients) {
+    assert.equal(isLatamClient(client), true);
+    const rows = applicationPlanForUser({ tipo: 'general', num_carreras: 3, ...client });
+    assert.deepEqual(rows, [
+      { installment: 1, amount: 900 },
+      { installment: 2, amount: 900 },
+      { installment: 3, amount: 900 },
+    ]);
+    assert.equal(rows.reduce((sum, row) => sum + row.amount, 0), 2700);
+  }
+});
+
+test('si LATAM ya pagó una cuota histórica, las pendientes se ajustan para sumar 2.700 €', () => {
+  const rows = latamPlanWithPaidAmounts(applicationPlan('general', 1, 'latam'), [
+    { installment: 1, amount: 666.33, status: 'paid' },
+  ]);
+
+  assert.equal(rows[0].amount, 666.33);
+  assert.equal(rows.reduce((sum, row) => sum + row.amount, 0), 2700);
+});
+
+test('las facturas LATAM salen sin IVA tanto en el cálculo común como en Holded', () => {
+  const latam = { origin: 'otros', pais: 'Perú', has_eu_id: true };
+  assert.equal(taxRateForClient(latam), 0);
+  assert.equal(holdedTaxRateFor(latam), 0);
+  assert.deepEqual(taxCodesFor(holdedTaxRateFor(latam)), []);
+  assert.deepEqual(invoiceBreakdown(900, latam), {
+    gross: 900,
+    base: 900,
+    tax: 0,
+    taxRate: 0,
+  });
+  assert.equal(invoiceBreakdown(900, latam, 21).taxRate, 0);
+
+  assert.equal(taxRateForClient({ origin: 'espana', pais: 'España' }), 21);
+  assert.equal(taxRateForClient({ origin: 'otros', pais: 'Alemania' }), 21);
 });
 
 test('Delft usa 999 € de entrada y dos cuotas posteriores de 1.000 €', () => {

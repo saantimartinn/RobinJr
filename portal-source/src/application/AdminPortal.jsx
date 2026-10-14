@@ -43,7 +43,7 @@ import {
   adminNotificationsList, adminNotificationCreate, notificationsPending, notificationAck,
 } from "../api.js";
 
-const { APPLICATION_TOTALS, FISCAL: ROBIN_FISCAL } = financialConfig;
+const { APPLICATION_TOTALS, FISCAL: ROBIN_FISCAL, isLatamClient } = financialConfig;
 const { academicSystemLabel, academicLevelLabel } = academicSystemsConfig;
 
 import { AdminChatIA, LivedAbroadCard } from "./ApplicationPortals.jsx";
@@ -1836,11 +1836,13 @@ function AdminPagos({ client }) {
   const tipo = (data.user?.tipo || client.tipo || "general").toLowerCase();
   const origin = (data.user?.origin || client.origin || "").toLowerCase();
   const esOtros = origin === "otros";
+  const esLatam = isLatamClient(data.user || client);
+  const esInternacional = esOtros || esLatam;
   const num = data.user?.num_carreras || client.num_carreras || 1;
 
   return (
     <div className="space-y-5">
-      {tipo === "general" && !esOtros && (
+      {tipo === "general" && !esInternacional && (
         <Card>
           <CardHeader title="Paquete contratado" subtitle="Solo para Pack General · ajusta el número de carreras" icon={BookOpen} />
           <CardContent>
@@ -1864,7 +1866,7 @@ function AdminPagos({ client }) {
       )}
 
       <Card>
-        <CardHeader title="Cuotas del cliente" subtitle={esOtros ? `Internacional · ${Number(APPLICATION_TOTALS.international).toLocaleString("es-ES")} €` : `Tipo de paquete: ${tipo}${tipo === "general" ? ` · ${num} carrera(s)` : ""}`} icon={CreditCard} />
+        <CardHeader title="Cuotas del cliente" subtitle={esLatam ? `LATAM · ${Number(APPLICATION_TOTALS.international).toLocaleString("es-ES")} € · sin IVA` : esOtros ? `Internacional · ${Number(APPLICATION_TOTALS.international).toLocaleString("es-ES")} €` : `Tipo de paquete: ${tipo}${tipo === "general" ? ` · ${num} carrera(s)` : ""}`} icon={CreditCard} />
         <CardContent>
           {error && <div className="text-sm text-rose-600 bg-rose-50 rounded-xl px-3 py-2 mb-3">{error}</div>}
           {loading ? (
@@ -1920,7 +1922,7 @@ function AdminPagos({ client }) {
                     <>
                     <PaymentStatusBadge status={p.status} />
                     <div className="flex gap-1 flex-shrink-0">
-                      {(p.installment === 2 || p.installment === 3) && !isPaid && (
+                      {(p.installment === 2 || p.installment === 3) && !isPaid && !esLatam && (
                         <Btn size="sm" variant="secondary" onClick={() => { setEditId(p.id); setEditVal(String(p.amount)); }} title="Editar importe de la cuota">
                           <Pencil className="h-3.5 w-3.5" /> Importe
                         </Btn>
