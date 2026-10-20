@@ -1754,6 +1754,11 @@ function AdminPagos({ client }) {
   const [now, setNow] = useState(new Date());
   const [xConcept, setXConcept] = useState("");
   const [xAmount, setXAmount] = useState("");
+  const [xPreset, setXPreset] = useState("custom");
+  const [xTax, setXTax] = useState("21");
+  const [xUnits, setXUnits] = useState("1");
+  const [xMode, setXMode] = useState("individual");
+  const [xHours, setXHours] = useState("4");
   const [xDue, setXDue] = useState("");
   const [xBusy, setXBusy] = useState(false);
   const [xErr, setXErr] = useState("");
@@ -1799,12 +1804,12 @@ function AdminPagos({ client }) {
   }
   async function addExtra() {
     const amt = Number(String(xAmount).replace(",", "."));
-    if (!xConcept.trim()) { setXErr("Indica el concepto del pago."); return; }
-    if (!isFinite(amt) || amt <= 0) { setXErr("Indica un importe válido."); return; }
+    if (xPreset === "custom" && !xConcept.trim()) { setXErr("Indica el concepto del pago."); return; }
+    if (xPreset === "custom" && (!isFinite(amt) || amt <= 0)) { setXErr("Indica un importe válido."); return; }
     setXBusy(true); setXErr("");
     try {
-      await adminPaymentsAdd(client.id, xConcept.trim(), amt, xDue || null);
-      setXConcept(""); setXAmount(""); setXDue("");
+      await adminPaymentsAdd(client.id, { preset: xPreset, concept: xConcept.trim(), amount: amt, tax_rate: xTax, units: Number(xUnits), ielts_mode: xMode, ielts_hours: Number(xHours), due_date: xDue || null });
+      setXConcept(""); setXAmount(""); setXDue(""); setXPreset("custom"); setXTax("21"); setXUnits("1"); setXMode("individual"); setXHours("4");
       await refresh();
     } catch (e) {
       setXErr(e.message || "No se pudo añadir el pago.");
@@ -1960,13 +1965,15 @@ function AdminPagos({ client }) {
         <CardHeader title="Añadir pago extra" subtitle="Para servicios adicionales que contrate el cliente" icon={Plus} />
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px_170px] gap-3">
-            <Field label="Concepto" value={xConcept} onChange={setXConcept} placeholder="Revisión de candidaturas" />
-            <Field label="Importe (€)" value={xAmount} onChange={(v) => setXAmount(v.replace(/[^\d.,]/g, ""))} placeholder="150" />
+            <label className="text-xs font-semibold text-slate-600">Tipo<select value={xPreset} onChange={e => setXPreset(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-2 text-sm"><option value="custom">Personalizado</option><option value="ielts_evaluation">Evaluación inicial de inglés/IELTS</option><option value="ielts_class">Clase de preparación de inglés/IELTS</option></select></label>
+            {xPreset === "custom" ? <Field label="Concepto" value={xConcept} onChange={setXConcept} placeholder="Revisión de candidaturas" /> : xPreset === "ielts_evaluation" ? <label className="text-xs font-semibold text-slate-600">Unidades<select value={xUnits} onChange={e => setXUnits(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-2 text-sm">{[1,2,3,4,5,6,10].map(n => <option key={n} value={n}>{n} · {n * 33} €</option>)}</select></label> : <label className="text-xs font-semibold text-slate-600">Modalidad<select value={xMode} onChange={e => setXMode(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-2 text-sm"><option value="individual">Individual · 33 €/hora</option><option value="group">Grupo · 16,50 €/hora</option></select></label>}
+            {xPreset === "custom" ? <Field label="Importe total (€)" value={xAmount} onChange={(v) => setXAmount(v.replace(/[^\d.,]/g, ""))} placeholder="150" /> : xPreset === "ielts_class" ? <label className="text-xs font-semibold text-slate-600">Horas<select value={xHours} onChange={e => setXHours(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-2 text-sm">{[4,6,8,12].map(n => <option key={n} value={n}>{n} · {n * (xMode === "group" ? 16.5 : 33)} €</option>)}</select></label> : <div className="text-xs text-slate-500 pt-2">Total: <strong>{Number(xUnits) * 33} €</strong><br/>Exento de IVA</div>}
+            {xPreset === "custom" && <label className="text-xs font-semibold text-slate-600">IVA<select value={xTax} onChange={e => setXTax(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-200 px-2 py-2 text-sm"><option value="21">21 %</option><option value="exempt">Exento</option></select></label>}
             <Field label="Fecha a pagar" type="date" value={xDue} onChange={setXDue} />
           </div>
           {xErr && <div className="text-sm text-rose-600 bg-rose-50 rounded-xl px-3 py-2 mt-3">{xErr}</div>}
           <div className="flex justify-end mt-3">
-            <Btn onClick={addExtra} disabled={xBusy || !xConcept.trim() || !xAmount}>
+            <Btn onClick={addExtra} disabled={xBusy || (xPreset === "custom" && (!xConcept.trim() || !xAmount))}>
               {xBusy ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Añadiendo…</> : <><Plus className="h-3.5 w-3.5" /> Añadir pago</>}
             </Btn>
           </div>

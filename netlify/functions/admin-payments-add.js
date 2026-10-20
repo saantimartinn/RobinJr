@@ -1,6 +1,6 @@
 /**
  * POST /api/admin/payments/add
- * Body: { user_id, concept, amount, due_date? (YYYY-MM-DD) }
+ * Body: { user_id, preset?, concept?, amount?, tax_rate?, ielts_mode?, ielts_hours?, units?, due_date? }
  * El asesor añade un pago extra a un cliente (servicio adicional contratado).
  * Se crea como una fila en `payments` con installment >= 4, estado 'unlocked'
  * (el cliente puede pagarlo directamente). Las 3 cuotas estándar no se tocan.
@@ -20,12 +20,27 @@ exports.handler = async (event) => {
   if (!body) return json({ error: 'invalid_json' }, { statusCode: 400 });
 
   const user_id = body.user_id;
+  const preset = String(body.preset || 'custom').trim();
   const concept = String(body.concept || '').trim();
-  const amount = Number(body.amount);
+  const tax_rate = String(body.tax_rate || '21').trim();
+  const ielts_mode = String(body.ielts_mode || '').trim();
+  const ielts_hours = Number(body.ielts_hours);
+  const units = Number(body.units);
+  let amount = Number(body.amount);
   const due_date = body.due_date ? String(body.due_date).trim() : null;
 
   if (!user_id) return json({ error: 'missing_user_id' }, { statusCode: 400 });
-  if (!concept) return json({ error: 'missing_concept' }, { statusCode: 400 });
+  if (!['custom', 'ielts_evaluation', 'ielts_class'].includes(preset)) return json({ error: 'invalid_preset' }, { statusCode: 400 });
+  if (preset === 'custom' && !concept) return json({ error: 'missing_concept' }, { statusCode: 400 });
+  if (preset === 'custom' && !['21', 'exempt'].includes(tax_rate)) return json({ error: 'invalid_tax_rate' }, { statusCode: 400 });
+  if (preset === 'ielts_evaluation') {
+    if (!Number.isInteger(units) || units < 1) return json({ error: 'invalid_units' }, { statusCode: 400 });
+    amount = units * 33;
+  }
+  if (preset === 'ielts_class') {
+    if (!['individual', 'group'].includes(ielts_mode) || ![4, 6, 8, 12].includes(ielts_hours)) return json({ error: 'invalid_ielts_class' }, { statusCode: 400 });
+    amount = ielts_hours * (ielts_mode === 'group' ? 16.5 : 33);
+  }
   if (!isFinite(amount) || amount <= 0) return json({ error: 'invalid_amount' }, { statusCode: 400 });
   if (due_date && !/^\d{4}-\d{2}-\d{2}$/.test(due_date)) {
     return json({ error: 'invalid_due_date' }, { statusCode: 400 });
@@ -61,7 +76,13 @@ exports.handler = async (event) => {
         currency: 'EUR',
         status: 'unlocked',
         unlocked_at: nowIso,
-        concept,
+        concept: preset === 'ielts_evaluation' ? 'Evaluación inicial de inglés/IELTS'
+          : preset === 'ielts_class' ? 'Clase de preparación de inglés/IELTS' : concept,
+        payment_data: preset === 'ielts_evaluation'
+          ? { ielts_preset: 'evaluation', ielts_units: units, tax_rate: 'exempt' }
+          : preset === 'ielts_class'
+            ? { ielts_preset: 'class', ielts_mode, ielts_hours, tax_rate: 'exempt' }
+            : { tax_rate },
         due_date,
       })
       .select()
