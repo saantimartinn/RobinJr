@@ -20,6 +20,7 @@ const used = new Set();
 for (const file of walk(root)) {
   const source = fs.readFileSync(file, 'utf8');
   for (const match of source.matchAll(/process\.env\.([A-Z0-9_]+)/g)) used.add(match[1]);
+  for (const match of source.matchAll(/\benv\.([A-Z0-9_]+)/g)) used.add(match[1]);
   for (const match of source.matchAll(/(?:refreshEnv|envVar):\s*['"]([A-Z0-9_]+)['"]/g)) used.add(match[1]);
 }
 for (const name of netlifyProvided) used.delete(name);
