@@ -9,7 +9,7 @@ import robinBike from "../assets/robin-bike.jpg";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User, MessageCircle, Calendar, FileText, LayoutDashboard,
-  LogOut, Shield, CheckCircle2, UploadCloud, Search,
+  Shield, CheckCircle2, UploadCloud, Search,
   Users, Download, Eye, Plus, Trash2, ChevronRight,
   BookOpen, MapPin, CreditCard, Loader2, Mail, AlertCircle,
   ChevronLeft, Sparkles, RefreshCw, ExternalLink, GraduationCap, ChevronDown,
@@ -739,9 +739,8 @@ function AdminChatAssistant({ user, activeClientId, clients, mascot }) {
 // =====================
 //  ADMIN — PORTAL SHELL
 // =====================
-export function AdminPortal({ user, onLogout }) {
+export function AdminPortal({ user }) {
   const adminId = (user.email || user.username || "").toLowerCase();
-  const adminName = (user.nombre ? `${user.nombre} ${user.apellidos || ""}` : (user.email || user.username)).trim();
   const [data, setData] = useState({ clients: [] });
   const [{ active, selectedClientId }, dispatchNavigation] = useReducer(adminNavigation, INITIAL_ADMIN_NAVIGATION);
   const [mascot] = useState(() => [robinKeys, robinGraduate, robinSkate, robinBike][Math.floor(Math.random() * 4)]);
@@ -851,8 +850,8 @@ export function AdminPortal({ user, onLogout }) {
   }, [data.clients, debouncedQ]);
 
   return (
-    <AdminWorkspace adminName={adminName} active={active} client={selectedClient} clients={data.clients || []}
-      loading={loadingClients} error={loadError} onNavigate={navigate} onSwitchClient={switchClient} onLogout={onLogout}>
+    <AdminWorkspace active={active} client={selectedClient} clients={data.clients || []}
+      loading={loadingClients} error={loadError} onNavigate={navigate} onSwitchClient={switchClient}>
 
           <main key={active + (selectedClient?.id || "list")}
             className="admin-content space-y-5 min-w-0" id="admin-content" tabIndex={-1}>

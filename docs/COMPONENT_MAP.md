@@ -1,52 +1,53 @@
 # Frontend component map
 
-Generated from 15 focused frontend modules: 80 top-level functions/components.
+Generated from 16 focused frontend modules: 81 top-level functions/components.
 Props, state, API calls and child components are static approximations and must be reviewed with behavioral changes.
 Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-platform reproducibility.
 
 | Name | Module | Domain | Props/args | Local state | API calls | Child components | Line |
 |---|---|---|---|---|---|---|---:|
-| nextOnboardingStep | app.jsx | app/auth | user | none | none | none | 26 |
-| PortalRobin | app.jsx | app/auth | none | authState, active, selectedPortal | apiLogin, apiLogout, apiMe, onboardingState, paymentsVerify | PortalSelector, LoginScreen, AdminPortal, OnboardingOrigin, OnboardingDNI, OnboardingContract, OnboardingPayment, OnboardingProfile, PortalShell | 36 |
-| AuthShell | app.jsx | app/auth | { children } | none | none | none | 149 |
-| PortalSelector | app.jsx | app/auth | { onSelectPortal } | none | none | AuthShell, Icon | 205 |
-| LoginScreen | app.jsx | app/auth | { onLogin, onBack } | email, password, error, loading | none | AuthShell, Field, Btn | 245 |
+| nextOnboardingStep | app.jsx | app/auth | user | none | none | none | 27 |
+| PortalRobin | app.jsx | app/auth | none | authState, active, selectedPortal | apiLogin, apiLogout, apiMe, onboardingState, paymentsVerify | CrossPortalNav, PortalSelector, LoginScreen, AdminPortal, OnboardingOrigin, OnboardingDNI, OnboardingContract, OnboardingPayment, OnboardingProfile, PortalShell | 37 |
+| AuthShell | app.jsx | app/auth | { children } | none | none | none | 155 |
+| PortalSelector | app.jsx | app/auth | { onSelectPortal } | none | none | AuthShell, Icon | 211 |
+| LoginScreen | app.jsx | app/auth | { onLogin, onBack } | email, password, error, loading | none | AuthShell, Field, Btn | 251 |
 | useDebounced | application/AdminPortal.jsx | application/admin | value, delay = 250 | v | none | none | 51 |
 | normalizeAdminClient | application/AdminPortal.jsx | application/admin | apiClient, adminId | none | none | none | 58 |
 | formatBirthDate | application/AdminPortal.jsx | application/admin | value | none | none | none | 74 |
 | birthdayIsToday | application/AdminPortal.jsx | application/admin | value | none | none | none | 81 |
 | AdminDashboard | application/AdminPortal.jsx | application/admin | { user, onOpenClient, onOpenAssign, onGotoTab } | loading, error, data, alertSort, taskTitle, taskBusy, refreshKey | adminDashboard, adminTaskCreate, adminTaskToggle, adminTaskDelete | Card, CardContent, Btn, KpiCard, CardHeader, Badge, Row, Divider | 94 |
 | AdminChatAssistant | application/AdminPortal.jsx | application/admin | { user, activeClientId, clients, mascot } | mode, messages, draft, busy, error, notesOpen, notesText, notesUserId, notesTitle, notesBusy | adminAssistant, adminHistorialAdd | Btn | 553 |
-| AdminPortal | application/AdminPortal.jsx | application/admin | { user, onLogout } | data, mascot, searchQ, loadingClients, loadError, assignOpen, assignList, assignLoading, assignError, assignBusyId | adminListClients, adminListAllClients, adminAssignClient | AdminWorkspace, AdminDashboard, AdminClientesList, AdminEstadoFases, AdminPerfil, AdminCarrerasNew, AdminDocumentosNew, AdminChatIA, AdminReservas, AdminPerfilAcademico | 742 |
-| AdminPerfilAcademico | application/AdminPortal.jsx | application/admin | { client } | none | none | Card, CardHeader, CardContent, Badge | 935 |
-| AdminNotificaciones | application/AdminPortal.jsx | application/admin | { adminId, clients } | title, content, type, scope, selected, allClients, loadingAll, busy, feedback, error | adminListAllClients, adminNotificationsList, adminNotificationCreate | Badge, Card, CardHeader, CardContent, Field, TextareaField, Btn | 992 |
-| ClientAvatar | application/AdminPortal.jsx | application/admin | { nombre, apellidos, size = "md" } | none | none | none | 1208 |
-| AdminClientesList | application/AdminPortal.jsx | application/admin | { clients, totalCount, searchQ, onSearch, onSelect, loading, loadError, onOpenAssign } | none | none | Card, CardHeader, Badge, Btn, CardContent, ClientAvatar | 1222 |
-| AssignClientModal | application/AdminPortal.jsx | application/admin | { adminEmail, list, loading, error, busyId, onAssign, onClose } | q | none | ClientAvatar, Badge, Btn | 1291 |
-| AdminPerfil | application/AdminPortal.jsx | application/admin | { client, onRefresh } | sugg, suggLoading, suggErr, regening, feedbackBusy, showQ | adminCareerSuggestions, adminCareerSuggestionsRegenerate, adminCareerSuggestionFeedback | Card, CardHeader, CardContent, Badge, LivedAbroadCard, Btn | 1365 |
-| AdminReservas | application/AdminPortal.jsx | application/bookings | { client } | bookings, loading, error | bookingsList | Card, CardHeader, CardContent, Badge | 1659 |
-| AdminPagos | application/AdminPortal.jsx | application/payments | { client } | data, loading, error, busyId, facturaOpen, facturaPayment, now, xConcept, xAmount, xDue | adminPaymentsList, adminPaymentsUnlock, adminPaymentsSetAmount, adminPaymentsSetCarreras, adminPaymentsAdd, adminPaymentsDelete | Card, CardHeader, CardContent, Btn, PaymentStatusBadge, Field, Factura | 1747 |
-| AdminCarrerasNew | application/AdminPortal.jsx | application/careers | { client } | library, assigned, loading, error, cName, cUni, cCity, cLevel, cDocs, editingId | adminCareersListAll, adminCareersCreate, adminCareersDelete, adminCareersAssign, adminCareersUnassign | Card, CardHeader, Btn, CardContent, Field, Divider, CareerRequirementsTimeline | 1988 |
-| AdminDocumentosNew | application/AdminPortal.jsx | application/documents | { client } | docs, loading, error, busyId, newName, newRequired, newTemplate | documentsGet, adminDocumentsList, adminDocumentsReview, adminDocumentsAdd, adminDocumentsDelete | Card, CardHeader, CardContent, Field, Btn, Badge | 2232 |
-| AdminEstadoFases | application/AdminPortal.jsx | application/admin | { client, onChangedPhase } | phase, busy, error | adminPhaseSet | ClientAvatar, Card, CardHeader, CardContent | 2377 |
-| AdminWorkspace | application/AdminWorkspace.jsx | shared/application | { adminName, active, client, clients, loading, error, onNavigate, onSwitchClient, onLogout, children } | pickerOpen | none | Icon, ClientPicker | 25 |
-| ClientPicker | application/AdminWorkspace.jsx | shared/application | { clients, selectedId, onSelect, onClose, returnRef } | query | none | none | 69 |
-| PortalShell | application/ApplicationPortals.jsx | application/client | { user, clientName, onLogout, active, setActive, onUserRefresh } | profilePhoto, photoBusy, photoError, chatOpen, mascot, summary | documentsList, bookingsList, profileAvatarUpload | NotificationPopup, Icon, AnimatePresence, Estado, Perfil, CarrerasCliente, DocumentosCliente, Reservas, PagosCliente, FaqsPage | 46 |
-| StudentAssistant | application/ApplicationPortals.jsx | application/client | { open, onOpenChange, mascot, onOpenFaq } | none | none | ChatIA | 170 |
-| Estado | application/ApplicationPortals.jsx | application/client | { step, onNavigate, docsPendingCount, bookingsCount } | none | none | Icon, Card, CardHeader, CardContent | 202 |
-| LivedAbroadCard | application/ApplicationPortals.jsx | application/client | { value, editable, onSaved, userId } | lived, country, other, busy, savedAt, error | livedAbroadSave | Card, CardHeader, CardContent, Field, Btn | 269 |
-| Perfil | application/ApplicationPortals.jsx | application/client | { user, clientName, profilePhoto, onPhotoChange, photoBusy, photoError, intereses, onUserRefresh } | none | none | Card, CardContent, Badge, LivedAbroadCard | 355 |
-| Carreras | application/ApplicationPortals.jsx | application/careers | { templates, selectedIds, onSetSelected } | none | none | Card, CardHeader, CardContent, Divider, Badge | 428 |
-| Documentos | application/ApplicationPortals.jsx | application/documents | { requests, pending, done, uploadedDocs, onUpload, onView, onDownload } | file, displayName, selectedReqId | none | Card, CardHeader, CardContent, Field, Btn, Badge | 489 |
-| ChatIA | application/ApplicationPortals.jsx | application/client | { active, mascot, onOpenFaq } | messages, aiPaused, draft, loading, sending, error | chatAiList, chatAiSend | none | 581 |
-| AdminChatIA | application/ApplicationPortals.jsx | application/admin | { client } | messages, aiPaused, draft, loading, busy, error | adminChatList, adminChatSend, adminChatResume | Card, CardHeader, CardContent, Btn | 686 |
-| Reservas | application/ApplicationPortals.jsx | application/bookings | none | serverBookings, loading, error, busy, refreshKey, lastCreated, avDays, avLoading, advisorName, calendarConnected | bookingsList, bookingsCreate, bookingsAvailability | Card, CardHeader, CardContent, Btn, Badge | 811 |
+| AdminPortal | application/AdminPortal.jsx | application/admin | { user } | data, mascot, searchQ, loadingClients, loadError, assignOpen, assignList, assignLoading, assignError, assignBusyId | adminListClients, adminListAllClients, adminAssignClient | AdminWorkspace, AdminDashboard, AdminClientesList, AdminEstadoFases, AdminPerfil, AdminCarrerasNew, AdminDocumentosNew, AdminChatIA, AdminReservas, AdminPerfilAcademico | 742 |
+| AdminPerfilAcademico | application/AdminPortal.jsx | application/admin | { client } | none | none | Card, CardHeader, CardContent, Badge | 934 |
+| AdminNotificaciones | application/AdminPortal.jsx | application/admin | { adminId, clients } | title, content, type, scope, selected, allClients, loadingAll, busy, feedback, error | adminListAllClients, adminNotificationsList, adminNotificationCreate | Badge, Card, CardHeader, CardContent, Field, TextareaField, Btn | 991 |
+| ClientAvatar | application/AdminPortal.jsx | application/admin | { nombre, apellidos, size = "md" } | none | none | none | 1207 |
+| AdminClientesList | application/AdminPortal.jsx | application/admin | { clients, totalCount, searchQ, onSearch, onSelect, loading, loadError, onOpenAssign } | none | none | Card, CardHeader, Badge, Btn, CardContent, ClientAvatar | 1221 |
+| AssignClientModal | application/AdminPortal.jsx | application/admin | { adminEmail, list, loading, error, busyId, onAssign, onClose } | q | none | ClientAvatar, Badge, Btn | 1290 |
+| AdminPerfil | application/AdminPortal.jsx | application/admin | { client, onRefresh } | sugg, suggLoading, suggErr, regening, feedbackBusy, showQ | adminCareerSuggestions, adminCareerSuggestionsRegenerate, adminCareerSuggestionFeedback | Card, CardHeader, CardContent, Badge, LivedAbroadCard, Btn | 1364 |
+| AdminReservas | application/AdminPortal.jsx | application/bookings | { client } | bookings, loading, error | bookingsList | Card, CardHeader, CardContent, Badge | 1658 |
+| AdminPagos | application/AdminPortal.jsx | application/payments | { client } | data, loading, error, busyId, facturaOpen, facturaPayment, now, xConcept, xAmount, xPreset | adminPaymentsList, adminPaymentsUnlock, adminPaymentsSetAmount, adminPaymentsSetCarreras, adminPaymentsAdd, adminPaymentsDelete | Card, CardHeader, CardContent, Btn, PaymentStatusBadge, Field, Factura | 1746 |
+| AdminCarrerasNew | application/AdminPortal.jsx | application/careers | { client } | library, assigned, loading, error, cName, cUni, cCity, cLevel, cDocs, editingId | adminCareersListAll, adminCareersCreate, adminCareersDelete, adminCareersAssign, adminCareersUnassign | Card, CardHeader, Btn, CardContent, Field, Divider, CareerRequirementsTimeline | 1994 |
+| AdminDocumentosNew | application/AdminPortal.jsx | application/documents | { client } | docs, loading, error, busyId, newName, newRequired, newTemplate | documentsGet, adminDocumentsList, adminDocumentsReview, adminDocumentsAdd, adminDocumentsDelete | Card, CardHeader, CardContent, Field, Btn, Badge | 2238 |
+| AdminEstadoFases | application/AdminPortal.jsx | application/admin | { client, onChangedPhase } | phase, busy, error | adminPhaseSet | ClientAvatar, Card, CardHeader, CardContent | 2383 |
+| AdminWorkspace | application/AdminWorkspace.jsx | shared/application | { active, client, clients, loading, error, onNavigate, onSwitchClient, children } | pickerOpen | none | Icon, ClientPicker | 24 |
+| ClientPicker | application/AdminWorkspace.jsx | shared/application | { clients, selectedId, onSelect, onClose, returnRef } | query | none | none | 64 |
+| PortalShell | application/ApplicationPortals.jsx | application/client | { user, clientName, active, setActive, onUserRefresh } | profilePhoto, photoBusy, photoError, chatOpen, mascot, summary | documentsList, bookingsList, profileAvatarUpload | NotificationPopup, Icon, AnimatePresence, Estado, Perfil, CarrerasCliente, DocumentosCliente, Reservas, PagosCliente, FaqsPage | 45 |
+| StudentAssistant | application/ApplicationPortals.jsx | application/client | { open, onOpenChange, mascot, onOpenFaq } | none | none | ChatIA | 159 |
+| Estado | application/ApplicationPortals.jsx | application/client | { step, onNavigate, docsPendingCount, bookingsCount } | none | none | Icon, Card, CardHeader, CardContent | 191 |
+| LivedAbroadCard | application/ApplicationPortals.jsx | application/client | { value, editable, onSaved, userId } | lived, country, other, busy, savedAt, error | livedAbroadSave | Card, CardHeader, CardContent, Field, Btn | 258 |
+| Perfil | application/ApplicationPortals.jsx | application/client | { user, clientName, profilePhoto, onPhotoChange, photoBusy, photoError, intereses, onUserRefresh } | none | none | Card, CardContent, Badge, LivedAbroadCard | 344 |
+| Carreras | application/ApplicationPortals.jsx | application/careers | { templates, selectedIds, onSetSelected } | none | none | Card, CardHeader, CardContent, Divider, Badge | 417 |
+| Documentos | application/ApplicationPortals.jsx | application/documents | { requests, pending, done, uploadedDocs, onUpload, onView, onDownload } | file, displayName, selectedReqId | none | Card, CardHeader, CardContent, Field, Btn, Badge | 478 |
+| ChatIA | application/ApplicationPortals.jsx | application/client | { active, mascot, onOpenFaq } | messages, aiPaused, draft, loading, sending, error | chatAiList, chatAiSend | none | 570 |
+| AdminChatIA | application/ApplicationPortals.jsx | application/admin | { client } | messages, aiPaused, draft, loading, busy, error | adminChatList, adminChatSend, adminChatResume | Card, CardHeader, CardContent, Btn | 675 |
+| Reservas | application/ApplicationPortals.jsx | application/bookings | none | serverBookings, loading, error, busy, refreshKey, lastCreated, avDays, avLoading, advisorName, calendarConnected | bookingsList, bookingsCreate, bookingsAvailability | Card, CardHeader, CardContent, Btn, Badge | 800 |
 | careerTimelineItems | application/careers/CareerRequirementsTimeline.jsx | shared/application | careers = [] | none | none | none | 6 |
 | formatDeadline | application/careers/CareerRequirementsTimeline.jsx | shared/application | value | none | none | none | 23 |
 | CareerRequirementsTimeline | application/careers/CareerRequirementsTimeline.jsx | shared/application | { careers = [], title = "Timeline de requerimientos" } | none | none | Card, CardHeader, CardContent, Icon, Badge | 30 |
 | PagosCliente | application/ClientSections.jsx | application/payments | none | data, loading, loadError, facturaOpen, facturaPayment, payBusy | paymentsList, paymentsCheckout | Card, CardHeader, CardContent, PaymentStatusBadge, Btn, Factura | 14 |
 | CarrerasCliente | application/ClientSections.jsx | application/careers | none | careers, loading, error | careersListMine | Card, CardHeader, CardContent, Badge, CareerRequirementsTimeline | 121 |
 | DocumentosCliente | application/ClientSections.jsx | application/documents | none | docs, loading, error, uploadingId | documentsList, documentsGet, documentsUpload | Badge, Btn, Card, CardHeader, CardContent | 178 |
+| CrossPortalNav | application/CrossPortalNav.jsx | shared/application | { current = "application", user = null, onLogout, onRefresh } | none | none | none | 14 |
 | buildDefaultDocs | application/documents/document-utils.js | application/documents | level | none | none | none | 28 |
 | statusLabel | application/documents/document-utils.js | application/documents | status | none | none | none | 46 |
 | newCareerRequirement | application/documents/document-utils.js | application/documents | type = 'document' | none | none | none | 53 |
@@ -91,12 +92,13 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 
 | Module | Bytes | Responsibility |
 |---|---:|---|
-| app.jsx | 12151 | composition root and authentication screens |
-| application/AdminPortal.jsx | 120504 | advisor portal and application administration |
-| application/AdminWorkspace.jsx | 7506 | focused frontend component module |
-| application/ApplicationPortals.jsx | 53201 | application client portal composition |
+| app.jsx | 12984 | composition root and authentication screens |
+| application/AdminPortal.jsx | 122840 | advisor portal and application administration |
+| application/AdminWorkspace.jsx | 7033 | focused frontend component module |
+| application/ApplicationPortals.jsx | 52579 | application client portal composition |
 | application/careers/CareerRequirementsTimeline.jsx | 3283 | focused frontend component module |
 | application/ClientSections.jsx | 13474 | client payments, careers and documents |
+| application/CrossPortalNav.jsx | 1858 | focused frontend component module |
 | application/documents/document-utils.js | 2918 | document phases, defaults and status mapping |
 | application/Faqs.jsx | 6392 | focused frontend component module |
 | application/onboarding/OnboardingFlow.jsx | 58125 | application onboarding flow |

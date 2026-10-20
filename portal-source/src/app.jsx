@@ -8,6 +8,7 @@ import { Btn, Field } from "./ui.jsx";
 import { reportClientError } from "./client-utils.js";
 import { AdminPortal } from "./application/AdminPortal.jsx";
 import { PortalShell } from "./application/ApplicationPortals.jsx";
+import { CrossPortalNav } from "./application/CrossPortalNav.jsx";
 import {
   OnboardingContract,
   OnboardingDNI,
@@ -113,36 +114,41 @@ export default function PortalRobin() {
 
   if (authState.loading) {
     return (
-      <div className="min-h-screen grid place-items-center" style={{ background: CREAM }}>
-        <div className="flex items-center gap-3 text-slate-500 text-sm">
-          <Loader2 className="h-4 w-4 animate-spin" /> Cargando portal…
+      <>
+        <CrossPortalNav current="application" />
+        <div className="min-h-screen grid place-items-center" style={{ background: CREAM }}>
+          <div className="flex items-center gap-3 text-slate-500 text-sm">
+            <Loader2 className="h-4 w-4 animate-spin" /> Cargando portal…
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
-  if (!authState.user && isSelectorRoute && !selectedPortal) return <PortalSelector onSelectPortal={() => window.location.assign("/portal/")} />;
-  if (!authState.user) return <LoginScreen onLogin={handleLogin} onBack={() => window.location.assign("/login")} />;
-  if (isAdminUser(authState.user)) return <AdminPortal user={authState.user} onLogout={handleLogout} />;
+  if (!authState.user && isSelectorRoute && !selectedPortal) return <><CrossPortalNav current="application" /><PortalSelector onSelectPortal={() => window.location.assign("/portal/")} /></>;
+  if (!authState.user) return <><CrossPortalNav current="application" /><LoginScreen onLogin={handleLogin} onBack={() => window.location.assign("/login")} /></>;
+  if (isAdminUser(authState.user)) return <><CrossPortalNav current="admin" user={authState.user} onLogout={handleLogout} /><AdminPortal user={authState.user} /></>;
 
   const onboardingProps = { user: authState.user, onLogout: handleLogout, onDone: refreshState };
-  if (authState.needsOnboarding && authState.onboardingStep === "origin") return <OnboardingOrigin {...onboardingProps} />;
-  if (authState.needsOnboarding && authState.onboardingStep === "dni") return <OnboardingDNI {...onboardingProps} />;
-  if (authState.needsOnboarding && authState.onboardingStep === "contract") return <OnboardingContract {...onboardingProps} />;
-  if (authState.needsOnboarding && authState.onboardingStep === "payment") return <OnboardingPayment {...onboardingProps} />;
-  if (authState.needsOnboarding && authState.onboardingStep === "profile") return <OnboardingProfile {...onboardingProps} />;
+  if (authState.needsOnboarding && authState.onboardingStep === "origin") return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><OnboardingOrigin {...onboardingProps} /></>;
+  if (authState.needsOnboarding && authState.onboardingStep === "dni") return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><OnboardingDNI {...onboardingProps} /></>;
+  if (authState.needsOnboarding && authState.onboardingStep === "contract") return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><OnboardingContract {...onboardingProps} /></>;
+  if (authState.needsOnboarding && authState.onboardingStep === "payment") return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><OnboardingPayment {...onboardingProps} /></>;
+  if (authState.needsOnboarding && authState.onboardingStep === "profile") return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><OnboardingProfile {...onboardingProps} /></>;
 
   const user = authState.user;
   const clientName = (user.nombre ? `${user.nombre} ${user.apellidos || ""}` : user.email || user.username || "").trim();
   return (
-    <PortalShell
-      user={user}
-      clientName={clientName}
-      onLogout={handleLogout}
-      active={active}
-      setActive={setActive}
-      onUserRefresh={refreshUser}
-    />
+    <>
+      <CrossPortalNav current="application" user={user} onLogout={handleLogout} />
+      <PortalShell
+        user={user}
+        clientName={clientName}
+        active={active}
+        setActive={setActive}
+        onUserRefresh={refreshUser}
+      />
+    </>
   );
 }
 

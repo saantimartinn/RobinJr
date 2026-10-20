@@ -6,13 +6,6 @@
 .admin-workspace :is(button,a,input,select,textarea):focus-visible { outline: 3px solid #c89626; outline-offset: 3px; }
 .admin-skip { position: fixed; top: -100px; left: 20px; padding: 12px; background: white; z-index: 100; }
 .admin-skip:focus { top: 12px; }
-.admin-header { height: 80px; padding: 0 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: white; border-bottom: 1px solid #e5e9ef; }
-.admin-brand { display: flex; align-items: center; gap: 23px; background: none; border: 0; }
-.admin-brand img { width: 132px; height: 43px; object-fit: contain; }
-.admin-brand > span { border-left: 1px solid #dbe1e9; padding-left: 23px; font-size: 10px; font-weight: 750; letter-spacing: .15em; color: #64718a; }
-.admin-account, .admin-account > span, .admin-account button { display: flex; align-items: center; gap: 9px; }
-.admin-account { font-size: 13px; gap: 24px; }
-.admin-account button { background: #f7f8fa; border: 1px solid #e1e5eb; border-radius: 10px; padding: 10px 14px; }
 .admin-layout { max-width: 1600px; margin: auto; display: grid; grid-template-columns: 235px minmax(0,1fr); }
 .admin-sidebar { padding: 32px 20px; border-right: 1px solid #e5e9ef; background: white; }
 .admin-team { display: flex; gap: 12px; align-items: center; margin-bottom: 38px; }
@@ -94,14 +87,12 @@
 .admin-assistant-panel button { min-height: 36px; }
 @media (max-width: 1200px) { .admin-layout { grid-template-columns: 205px minmax(0,1fr); } .admin-workarea { padding: 28px 22px 100px; } }
 @media (max-width: 1023px) {
-  .admin-layout { display: block; } .admin-header { padding: 0 22px; height: 70px; }
+  .admin-layout { display: block; }
   .admin-sidebar { padding: 10px 20px; border-right: 0; border-bottom: 1px solid #e5e9ef; }
   .admin-team, .admin-nav-caption, .admin-sidebar-note { display: none; }
   .admin-global-nav { display: flex; gap: 8px; overflow: auto; } .admin-global-nav button { flex-shrink: 0; padding: 11px 14px; }
 }
 @media (max-width: 600px) {
-  .admin-header { padding: 0 16px; height: 66px; gap: 10px; } .admin-brand img { width: 111px; height: 37px; }
-  .admin-brand > span, .admin-account > span { display: none; } .admin-account button { padding: 8px 11px; min-height: 40px; }
   .admin-sidebar { padding: 9px 12px; } .admin-global-nav button { font-size: 12px; padding: 11px 12px; } .admin-global-nav small { display: none; }
   .admin-workarea { padding: 24px 14px 110px; } .admin-page-heading { margin-bottom: 22px; }
   .admin-client-context { padding-top: 10px; margin-top: -10px; } .admin-breadcrumb { margin-bottom: 12px; }

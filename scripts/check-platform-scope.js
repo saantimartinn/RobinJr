@@ -36,6 +36,7 @@ const retiredContent = [
 const allowedRetiredContent = new Map([
   ['infrastructure/cloudflare/README.md', new Set(['The ' + 'Robin' + ' Plan', 'Robin' + ' Plan'])],
   ['portal-source/src/app.jsx', new Set(['The ' + 'Robin' + ' Plan', 'Robin' + ' Plan'])],
+  ['portal-source/src/application/CrossPortalNav.jsx', new Set(['The ' + 'Robin' + ' Plan', 'Robin' + ' Plan'])],
 ]);
 
 function walk(directory) {

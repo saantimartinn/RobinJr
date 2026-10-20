@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { LayoutDashboard, Users, Bell, LogOut, Shield, Search, X, ArrowLeft, ArrowLeftRight, ChevronRight, User, BookOpen, FileText, CreditCard, Sparkles, Calendar, Compass, HelpCircle, GraduationCap } from "lucide-react";
-import robinWordmark from "../assets/robin-wordmark.png";
+import { LayoutDashboard, Users, Bell, Shield, Search, X, ArrowLeft, ArrowLeftRight, ChevronRight, User, BookOpen, FileText, CreditCard, Sparkles, Calendar, Compass, HelpCircle, GraduationCap } from "lucide-react";
 import { APP_STEPS } from "../application-steps.js";
 import "./admin-portal.css";
 
@@ -22,7 +21,7 @@ const GLOBAL_TABS = [
 ];
 const fullName = c => `${c.nombre || ""} ${c.apellidos || ""}`.trim() || c.email || c.username || "Alumno";
 
-export function AdminWorkspace({ adminName, active, client, clients, loading, error, onNavigate, onSwitchClient, onLogout, children }) {
+export function AdminWorkspace({ active, client, clients, loading, error, onNavigate, onSwitchClient, children }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const switchRef = useRef(null);
   const tabRef = useRef(null);
@@ -34,10 +33,6 @@ export function AdminWorkspace({ adminName, active, client, clients, loading, er
   const clientPage = CLIENT_TABS.some(t => t.key === active);
   return <div className="admin-workspace">
     <a className="admin-skip" href="#admin-content">Saltar al contenido</a>
-    <header className="admin-header">
-      <button className="admin-brand" onClick={() => onNavigate("inicio")} aria-label="Robin, ir al resumen"><img src={robinWordmark} alt="ROBIN" /><span>TEAM WORKSPACE</span></button>
-      <div className="admin-account"><span><Shield size={15} />{adminName}</span><button onClick={onLogout}><LogOut size={16} />Salir</button></div>
-    </header>
     <div className="admin-layout">
       <aside className="admin-sidebar">
         <div className="admin-team"><span className="admin-team-icon"><Shield size={21} /></span><div><strong>Equipo Robin</strong><span>Administración</span></div></div>
