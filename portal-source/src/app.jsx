@@ -127,7 +127,7 @@ export default function PortalRobin() {
 
   if (!authState.user && isSelectorRoute && !selectedPortal) return <><CrossPortalNav current="application" /><PortalSelector onSelectPortal={() => window.location.assign("/portal/")} /></>;
   if (!authState.user) return <><CrossPortalNav current="application" /><LoginScreen onLogin={handleLogin} onBack={() => window.location.assign("/login")} /></>;
-  if (isAdminUser(authState.user)) return <><CrossPortalNav current="admin" user={authState.user} onLogout={handleLogout} /><AdminPortal user={authState.user} /></>;
+  if (isAdminUser(authState.user)) return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><AdminPortal user={authState.user} /></>;
 
   const onboardingProps = { user: authState.user, onLogout: handleLogout, onDone: refreshState };
   if (authState.needsOnboarding && authState.onboardingStep === "origin") return <><CrossPortalNav current="application" user={authState.user} onLogout={handleLogout} /><OnboardingOrigin {...onboardingProps} /></>;
