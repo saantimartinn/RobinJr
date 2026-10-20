@@ -92,7 +92,7 @@ Module sizes are UTF-8 bytes after normalizing line endings to LF for cross-plat
 
 | Module | Bytes | Responsibility |
 |---|---:|---|
-| app.jsx | 12984 | composition root and authentication screens |
+| app.jsx | 12990 | composition root and authentication screens |
 | application/AdminPortal.jsx | 122840 | advisor portal and application administration |
 | application/AdminWorkspace.jsx | 7033 | focused frontend component module |
 | application/ApplicationPortals.jsx | 52579 | application client portal composition |
